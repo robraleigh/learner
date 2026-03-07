@@ -1,0 +1,43 @@
+{
+  "workbench.statusBar.visible": false,
+  "workbench.layoutControl.enabled": false,
+  "workbench.editor.showTabs": "single",
+  "workbench.editor.enablePreview": false,
+  "workbench.startupEditor": "none",
+  "workbench.tips.enabled": false,
+  "workbench.colorTheme": "Default Dark Modern",
+
+  "editor.minimap.enabled": false,
+  "breadcrumbs.enabled": false,
+  "editor.lineNumbers": "on",
+  "editor.fontSize": 15,
+  "editor.fontFamily": "'Menlo', 'Monaco', 'Courier New', monospace",
+  "editor.lineHeight": 1.6,
+  "editor.wordWrap": "on",
+  "editor.renderWhitespace": "none",
+  "editor.smoothScrolling": true,
+  "editor.cursorBlinking": "smooth",
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/.learner": false
+  },
+
+  "explorer.openEditors.visible": 0,
+  "explorer.compactFolders": false,
+
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.lineHeight": 1.4,
+
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "javascript.suggest.autoImports": true,
+
+  "git.decorations.enabled": true,
+  "git.enableSmartCommit": false,
+  "git.confirmSync": false
+}

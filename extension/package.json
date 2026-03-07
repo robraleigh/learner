@@ -1,0 +1,46 @@
+{
+  "name": "learner-sidebar",
+  "displayName": "Learner",
+  "description": "Interactive coding education sidebar — Build Map, Q&A review, and progress tracking.",
+  "version": "0.1.0",
+  "publisher": "learner",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Education"],
+  "activationEvents": [
+    "onView:learner.sidebar"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "learner-container",
+          "title": "Learner",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "learner-container": [
+        {
+          "id": "learner.sidebar",
+          "name": "My Progress",
+          "type": "webview"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "npx @vscode/vsce package --no-dependencies --out learner.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.3.0"
+  }
+}

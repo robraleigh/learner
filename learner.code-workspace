@@ -1,0 +1,39 @@
+{
+  "folders": [
+    {
+      "name": "My Project",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "workbench.statusBar.visible": false,
+    "workbench.layoutControl.enabled": false,
+    "workbench.editor.showTabs": "single",
+    "workbench.editor.enablePreview": false,
+    "workbench.startupEditor": "none",
+    "workbench.tips.enabled": false,
+    "workbench.colorTheme": "Default Dark Modern",
+
+    "editor.minimap.enabled": false,
+    "breadcrumbs.enabled": false,
+    "editor.lineNumbers": "on",
+    "editor.fontSize": 15,
+    "editor.fontFamily": "'Menlo', 'Monaco', 'Courier New', monospace",
+    "editor.lineHeight": 1.6,
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "explorer.openEditors.visible": 0,
+    "terminal.integrated.fontSize": 14,
+    "git.decorations.enabled": true
+  },
+  "extensions": {
+    "recommendations": [
+      "anthropic.claude-code",
+      "learner.learner-sidebar"
+    ]
+  }
+}

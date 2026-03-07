@@ -1,0 +1,285 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground);
+  background: var(--vscode-sideBar-background);
+  padding: 0;
+  line-height: 1.5;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#app {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--vscode-descriptionForeground);
+}
+.empty-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+.empty-state h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--vscode-foreground);
+}
+.empty-state p {
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+.empty-state code {
+  display: block;
+  background: var(--vscode-textCodeBlock-background);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 12px;
+  color: var(--vscode-textPreformat-foreground);
+  margin: 8px 0;
+}
+.empty-state .hint {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+
+/* ── Header ── */
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#student-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+#level-badge {
+  font-size: 11px;
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ── XP Bar ── */
+#xp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#xp-bar-container {
+  height: 6px;
+  background: var(--vscode-scrollbarSlider-background);
+  border-radius: 3px;
+  overflow: hidden;
+}
+#xp-bar {
+  height: 100%;
+  background: var(--vscode-progressBar-background);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+#xp-label {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  text-align: right;
+}
+
+/* ── Review Card ── */
+#review-card {
+  background: var(--vscode-editor-inactiveSelectionBackground);
+  border: 1px solid var(--vscode-focusBorder);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#review-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vscode-descriptionForeground);
+}
+#review-level-badge {
+  background: var(--vscode-focusBorder);
+  color: var(--vscode-button-foreground);
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+#review-question {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--vscode-foreground);
+}
+#review-answer {
+  width: 100%;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 4px;
+  padding: 8px;
+  font-family: var(--vscode-font-family);
+  font-size: 12px;
+  resize: vertical;
+  outline: none;
+}
+#review-answer:focus {
+  border-color: var(--vscode-focusBorder);
+}
+#review-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.btn-primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  border-radius: 4px;
+  padding: 5px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--vscode-font-family);
+}
+.btn-primary:hover {
+  background: var(--vscode-button-hoverBackground);
+}
+.btn-secondary {
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: none;
+  border-radius: 4px;
+  padding: 5px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--vscode-font-family);
+}
+.btn-secondary:hover {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+#hints-used-label {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  text-align: right;
+}
+
+/* ── Build Map ── */
+#build-map-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#build-map-header {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vscode-descriptionForeground);
+}
+#build-map-progress-label {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+#build-map-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.build-map-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+.build-map-item.current {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+.build-map-item.complete {
+  color: var(--vscode-descriptionForeground);
+  text-decoration: line-through;
+}
+.build-map-item .item-num {
+  font-size: 10px;
+  min-width: 16px;
+  color: var(--vscode-descriptionForeground);
+}
+.build-map-item.current .item-num {
+  color: var(--vscode-list-activeSelectionForeground);
+}
+.check-icon {
+  color: var(--vscode-charts-green);
+  font-size: 12px;
+  min-width: 14px;
+}
+.current-arrow {
+  font-size: 10px;
+  min-width: 14px;
+}
+
+/* ── Badges ── */
+#badges-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#badges-header {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vscode-descriptionForeground);
+}
+#badges-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.badge {
+  font-size: 11px;
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  padding: 3px 8px;
+  border-radius: 10px;
+  cursor: default;
+}
+
+/* ── Streak ── */
+#streak-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  padding-top: 4px;
+  border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+#streak-icon {
+  font-size: 14px;
+}

@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${workspaceFolder}/.claude/hooks/post-tool-use.sh\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${workspaceFolder}/.claude/hooks/user-prompt-submit.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

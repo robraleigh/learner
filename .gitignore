@@ -1,0 +1,24 @@
+# Student progress data — not committed so each student has their own
+.learner/config.json
+.learner/build-map.md
+.learner/progress.json
+.learner/glossary.md
+.learner/state.json
+.learner/pending-answer.json
+
+# Keep the directory itself
+!.learner/.gitkeep
+
+# Extension build artifacts
+extension/node_modules/
+extension/out/
+extension/learner.vsix
+
+# Claude local settings (API key etc.)
+.claude/settings.local.json
+
+# Node
+node_modules/
+
+# macOS
+.DS_Store
