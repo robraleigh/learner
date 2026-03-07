@@ -39,5 +39,11 @@
 
   "git.decorations.enabled": true,
   "git.enableSmartCommit": false,
-  "git.confirmSync": false
+  "git.confirmSync": false,
+
+  "chat.commandCenter.enabled": false,
+  "workbench.secondarySideBar.visible": false,
+  "github.copilot.enable": {
+    "*": false
+  }
 }

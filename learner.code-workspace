@@ -28,7 +28,12 @@
     "files.autoSaveDelay": 1000,
     "explorer.openEditors.visible": 0,
     "terminal.integrated.fontSize": 14,
-    "git.decorations.enabled": true
+    "git.decorations.enabled": true,
+    "chat.commandCenter.enabled": false,
+    "workbench.secondarySideBar.visible": false,
+    "github.copilot.enable": {
+      "*": false
+    }
   },
   "extensions": {
     "recommendations": [
