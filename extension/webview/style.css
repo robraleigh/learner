@@ -130,46 +130,118 @@ body {
   text-align: right;
 }
 
-/* ── Instruction Card ── */
+/* ── Command cue strip ── */
+#command-cue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--vscode-notificationsInfoIcon-foreground, var(--vscode-charts-blue));
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  animation: cue-pulse 1.5s ease-in-out infinite alternate;
+}
+#command-cue-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+@keyframes cue-pulse {
+  from { opacity: 0.85; }
+  to   { opacity: 1; }
+}
+
+/* ── Instruction Card (hero zone) ── */
 #instruction-card {
   background: var(--vscode-editor-inactiveSelectionBackground);
   border: 1px solid var(--vscode-charts-blue);
-  border-left: 3px solid var(--vscode-charts-blue);
+  border-left: 4px solid var(--vscode-charts-blue);
   border-radius: 6px;
-  padding: 10px 12px;
+  padding: 14px 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 #instruction-header {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.07em;
   color: var(--vscode-descriptionForeground);
 }
 #instruction-type-badge {
   background: var(--vscode-charts-blue);
   color: #fff;
-  padding: 1px 6px;
+  padding: 2px 7px;
   border-radius: 8px;
   font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 #instruction-text {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--vscode-foreground);
-  font-weight: 500;
+  font-weight: 600;
+}
+#instruction-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 18px;
+  margin: 0;
+}
+#instruction-steps li {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--vscode-foreground);
+  padding-left: 4px;
 }
 #instruction-subtext {
   font-size: 12px;
   color: var(--vscode-descriptionForeground);
   line-height: 1.4;
+  border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
+  padding-top: 8px;
+}
+#instruction-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+.instruction-btn {
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--vscode-font-family);
+  text-align: center;
+  transition: opacity 0.15s ease;
+}
+.instruction-btn:hover {
+  opacity: 0.85;
+}
+.instruction-btn--primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+.instruction-btn--primary:hover {
+  background: var(--vscode-button-hoverBackground);
+  opacity: 1;
+}
+.instruction-btn--secondary {
+  background: transparent;
+  color: var(--vscode-foreground);
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
 }
 
 /* ── Review Card ── */
@@ -287,19 +359,20 @@ body {
   gap: 6px;
 }
 #build-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--vscode-descriptionForeground);
 }
-#build-map-subtitle {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-  font-style: italic;
-}
 #build-map-progress-label {
   font-size: 11px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--vscode-descriptionForeground);
 }
 #build-map-list {

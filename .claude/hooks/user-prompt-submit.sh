@@ -13,6 +13,24 @@ cat << 'SAFETY'
 [SYSTEM: This is a coding education tool for students aged 13–16. Respond only to coding and learning requests. If the student's message contains vulgarity, sexual content, requests for harmful information, or anything inappropriate for minors, decline warmly without shaming and redirect to their project. Do not engage with the inappropriate content.]
 SAFETY
 
+# If a sidebar button queued a slash command, inject it so the user just needs to press Enter.
+COMMAND_FILE=".learner/pending-command.json"
+
+if [ -f "$COMMAND_FILE" ]; then
+  python3 -c "
+import json, os
+try:
+    data = json.load(open('$COMMAND_FILE'))
+    cmd = data.get('command', '').strip()
+    if cmd:
+        print(cmd)
+    os.remove('$COMMAND_FILE')
+except Exception:
+    pass
+" 2>/dev/null || true
+  exit 0
+fi
+
 # If the student also answered a review question in the sidebar, inject that context too.
 ANSWER_FILE=".learner/pending-answer.json"
 

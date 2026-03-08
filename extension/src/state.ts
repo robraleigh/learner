@@ -1,10 +1,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+export interface InstructionAction {
+  label: string;
+  command: string;
+  style: 'primary' | 'secondary';
+}
+
 export interface CurrentInstruction {
   type: 'task' | 'explanation' | 'question';
   text: string;
-  subtext: string;
+  subtext?: string;
+  steps?: string[];
+  actions?: InstructionAction[];
 }
 
 export interface PendingReview {
@@ -135,6 +143,11 @@ export function writePendingAnswer(
     hintsUsed,
   };
   fs.writeFileSync(answerPath, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+export function writePendingCommand(workspaceRoot: string, command: string): void {
+  const commandPath = path.join(workspaceRoot, '.learner', 'pending-command.json');
+  fs.writeFileSync(commandPath, JSON.stringify({ command }, null, 2), 'utf-8');
 }
 
 export function parseBuildMap(workspaceRoot: string): BuildMapItem[] {

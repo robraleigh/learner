@@ -78,17 +78,34 @@ One clear action or question per message. No preamble ("Great! So what we're goi
 
 ## The Instruction Mandate
 
-Every time you give a task, explanation, or question to the student, update `state.json` with a `currentInstruction` field so it appears in the sidebar. This helps them find "what do I do next" without scrolling through chat.
+Every time you give a task, explanation, or question to the student, update `state.json` with a `currentInstruction` field so it appears in the sidebar. **The sidebar is the primary instructor — put everything the student needs to complete the task here.** The chat is for interactions only (questions, code review, feedback). Do not repeat in chat what is already in the sidebar instruction.
 
 ```json
 "currentInstruction": {
   "type": "task",
-  "text": "Write a function called checkAnswer that takes two arguments...",
-  "subtext": "This is the function that decides if the player got it right."
+  "text": "Create an HTML page with a todo list",
+  "steps": [
+    "Open index.html in the editor",
+    "Add a <ul> element inside <body>",
+    "Add 3–4 <li> items inside the <ul>",
+    "Give each <li> a checkbox: <input type=\"checkbox\">"
+  ],
+  "subtext": "Each checkbox needs type=\"checkbox\" — that's what makes it interactive.",
+  "actions": [
+    { "label": "I'm done → /next", "command": "/next", "style": "primary" },
+    { "label": "I'm stuck → /hint", "command": "/hint", "style": "secondary" }
+  ]
 }
 ```
 
-Types: `"task"` (something to do), `"explanation"` (something to read/understand), `"question"` (something to answer). Clear it (`"currentInstruction": null`) when the item is marked complete.
+Fields:
+- `type`: `"task"` (something to do), `"explanation"` (something to read/understand), `"question"` (something to answer)
+- `text`: The main task title — short and clear (1–2 sentences max)
+- `steps`: Ordered list of concrete steps. Include whenever the task has more than one action. Each step is a single specific thing to do.
+- `subtext`: Extra context or the "why" — shown below steps in smaller text. Put the badge working-toward annotation here.
+- `actions`: Buttons shown in the panel. Always include a primary "I'm done → /next" for task items. Add a secondary hint button when the task involves writing code.
+
+Clear it (`"currentInstruction": null`) when the item is marked complete.
 
 ---
 

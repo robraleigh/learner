@@ -7,6 +7,7 @@ import {
   CurrentInstruction,
   readState,
   writePendingAnswer,
+  writePendingCommand,
   parseBuildMap,
   isSetUp,
   getLevelForXP,
@@ -64,6 +65,17 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
         case 'requestHint': {
           // Tell the user to type /hint in Claude Code chat
           vscode.window.showInformationMessage('Type /hint in the Claude Code chat for a hint.');
+          break;
+        }
+        case 'triggerCommand': {
+          const { command } = message;
+          if (command) {
+            writePendingCommand(this._workspaceRoot, command);
+            this._view?.webview.postMessage({ type: 'commandQueued', command });
+            vscode.window.showInformationMessage(
+              `Press Enter in the Claude chat to run ${command}`
+            );
+          }
           break;
         }
         case 'switchProject': {
@@ -172,17 +184,26 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
 
       <!-- Session panel -->
       <div id="panel-session">
-        <!-- Instruction Card -->
+
+        <!-- Command cue (shown after a button is clicked) -->
+        <div id="command-cue" class="hidden">
+          <span id="command-cue-icon">→</span>
+          <span id="command-cue-text">Press Enter in the chat to continue</span>
+        </div>
+
+        <!-- Instruction Zone (hero — primary focus) -->
         <div id="instruction-card" class="hidden">
           <div id="instruction-header">
             <span id="instruction-type-badge"></span>
             <span id="instruction-header-label"></span>
           </div>
           <div id="instruction-text"></div>
-          <div id="instruction-subtext"></div>
+          <ol id="instruction-steps" class="hidden"></ol>
+          <div id="instruction-subtext" class="hidden"></div>
+          <div id="instruction-actions" class="hidden"></div>
         </div>
 
-        <!-- Review Card -->
+        <!-- Review Card (replaces instruction zone when a review is active) -->
         <div id="review-card" class="hidden">
           <div id="review-header">
             <span id="review-level-badge"></span>
@@ -190,7 +211,7 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
           </div>
           <div id="review-question"></div>
           <div id="review-input-area">
-            <textarea id="review-answer" placeholder="Type your answer and click Submit, or reply in the chat above..." rows="3"></textarea>
+            <textarea id="review-answer" placeholder="Type your answer here..." rows="3"></textarea>
             <div id="review-buttons">
               <button id="hint-btn" class="btn-secondary">Hint</button>
               <button id="submit-btn" class="btn-primary">Submit</button>
@@ -199,17 +220,18 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
           <div id="hints-used-label"></div>
         </div>
 
-        <!-- Idle hint -->
+        <!-- Idle hint (shown when no instruction and no review) -->
         <div id="idle-hint" class="hidden">
           <span id="idle-hint-icon">💡</span>
           <span>Type <code>/next</code> in the chat to work on the next step.</span>
         </div>
 
-        <!-- Build Map -->
+        <!-- Build Map (compact, secondary) -->
         <div id="build-map-section">
-          <div id="build-map-header">Build Map</div>
-          <div id="build-map-subtitle">Your project roadmap</div>
-          <div id="build-map-progress-label"></div>
+          <div id="build-map-header">
+            <span>Build Map</span>
+            <span id="build-map-progress-label"></span>
+          </div>
           <ul id="build-map-list"></ul>
         </div>
 
