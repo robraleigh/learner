@@ -151,11 +151,7 @@ const $instructionCard         = /** @type {HTMLElement} */ (document.getElement
 const $instructionTypeBadge    = /** @type {HTMLElement} */ (document.getElementById('instruction-type-badge'));
 const $instructionHeaderLabel  = /** @type {HTMLElement} */ (document.getElementById('instruction-header-label'));
 const $instructionText         = /** @type {HTMLElement} */ (document.getElementById('instruction-text'));
-const $instructionSteps        = /** @type {HTMLElement} */ (document.getElementById('instruction-steps'));
 const $instructionSubtext      = /** @type {HTMLElement} */ (document.getElementById('instruction-subtext'));
-const $instructionActions      = /** @type {HTMLElement} */ (document.getElementById('instruction-actions'));
-const $commandCue              = /** @type {HTMLElement} */ (document.getElementById('command-cue'));
-const $commandCueText          = /** @type {HTMLElement} */ (document.getElementById('command-cue-text'));
 const $reviewCard        = /** @type {HTMLElement} */ (document.getElementById('review-card'));
 const $reviewLevelBadge  = /** @type {HTMLElement} */ (document.getElementById('review-level-badge'));
 const $reviewQuestion    = /** @type {HTMLElement} */ (document.getElementById('review-question'));
@@ -224,12 +220,7 @@ $reviewAnswer.addEventListener('keydown', (e) => {
 window.addEventListener('message', (event) => {
   const message = event.data;
   if (message.type === 'stateUpdate') {
-    // Hide command cue on state update (Claude has responded)
-    $commandCue.classList.add('hidden');
     render(message.state, message.buildMap, message.setUp, message.levelInfo, message.currentInstruction, message.projects || []);
-  } else if (message.type === 'commandQueued') {
-    $commandCueText.textContent = `Press Enter in chat to run ${message.command}`;
-    $commandCue.classList.remove('hidden');
   }
 });
 
@@ -272,7 +263,7 @@ function render(state, buildMap, setUp, levelInfo, currentInstruction, projects)
   const effectiveInstruction = (currentInstruction && currentInstruction.text)
     ? currentInstruction
     : currentBuildItem
-      ? { type: 'task', text: currentBuildItem.text, subtext: null, steps: null, actions: null }
+      ? { type: 'task', text: currentBuildItem.text, subtext: null }
       : null;
 
   if (effectiveInstruction) {
@@ -281,45 +272,11 @@ function render(state, buildMap, setUp, levelInfo, currentInstruction, projects)
     $instructionTypeBadge.textContent = effectiveInstruction.type || 'task';
     $instructionHeaderLabel.textContent = typeLabels[effectiveInstruction.type] || 'Next step';
     $instructionText.textContent = effectiveInstruction.text;
-
-    // Steps list
-    const steps = effectiveInstruction.steps;
-    if (steps && steps.length > 0) {
-      $instructionSteps.innerHTML = '';
-      for (const step of steps) {
-        const li = document.createElement('li');
-        li.textContent = step;
-        $instructionSteps.appendChild(li);
-      }
-      $instructionSteps.classList.remove('hidden');
-    } else {
-      $instructionSteps.classList.add('hidden');
-    }
-
-    // Subtext
     if (effectiveInstruction.subtext) {
       $instructionSubtext.textContent = effectiveInstruction.subtext;
       $instructionSubtext.classList.remove('hidden');
     } else {
       $instructionSubtext.classList.add('hidden');
-    }
-
-    // Action buttons
-    const actions = effectiveInstruction.actions;
-    if (actions && actions.length > 0) {
-      $instructionActions.innerHTML = '';
-      for (const action of actions) {
-        const btn = document.createElement('button');
-        btn.className = action.style === 'primary' ? 'instruction-btn instruction-btn--primary' : 'instruction-btn instruction-btn--secondary';
-        btn.textContent = action.label;
-        btn.addEventListener('click', () => {
-          vscode.postMessage({ type: 'triggerCommand', command: action.command });
-        });
-        $instructionActions.appendChild(btn);
-      }
-      $instructionActions.classList.remove('hidden');
-    } else {
-      $instructionActions.classList.add('hidden');
     }
   } else {
     $instructionCard.classList.add('hidden');

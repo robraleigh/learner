@@ -7,7 +7,6 @@ import {
   CurrentInstruction,
   readState,
   writePendingAnswer,
-  writePendingCommand,
   parseBuildMap,
   isSetUp,
   getLevelForXP,
@@ -65,17 +64,6 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
         case 'requestHint': {
           // Tell the user to type /hint in Claude Code chat
           vscode.window.showInformationMessage('Type /hint in the Claude Code chat for a hint.');
-          break;
-        }
-        case 'triggerCommand': {
-          const { command } = message;
-          if (command) {
-            writePendingCommand(this._workspaceRoot, command);
-            this._view?.webview.postMessage({ type: 'commandQueued', command });
-            vscode.window.showInformationMessage(
-              `Press Enter in the Claude chat to run ${command}`
-            );
-          }
           break;
         }
         case 'switchProject': {
@@ -185,22 +173,14 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
       <!-- Session panel -->
       <div id="panel-session">
 
-        <!-- Command cue (shown after a button is clicked) -->
-        <div id="command-cue" class="hidden">
-          <span id="command-cue-icon">→</span>
-          <span id="command-cue-text">Press Enter in the chat to continue</span>
-        </div>
-
-        <!-- Instruction Zone (hero — primary focus) -->
+        <!-- Instruction Card -->
         <div id="instruction-card" class="hidden">
           <div id="instruction-header">
             <span id="instruction-type-badge"></span>
             <span id="instruction-header-label"></span>
           </div>
           <div id="instruction-text"></div>
-          <ol id="instruction-steps" class="hidden"></ol>
           <div id="instruction-subtext" class="hidden"></div>
-          <div id="instruction-actions" class="hidden"></div>
         </div>
 
         <!-- Review Card (replaces instruction zone when a review is active) -->

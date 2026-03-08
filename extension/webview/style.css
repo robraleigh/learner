@@ -130,29 +130,7 @@ body {
   text-align: right;
 }
 
-/* ── Command cue strip ── */
-#command-cue {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--vscode-notificationsInfoIcon-foreground, var(--vscode-charts-blue));
-  color: #fff;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  animation: cue-pulse 1.5s ease-in-out infinite alternate;
-}
-#command-cue-icon {
-  font-size: 14px;
-  flex-shrink: 0;
-}
-@keyframes cue-pulse {
-  from { opacity: 0.85; }
-  to   { opacity: 1; }
-}
-
-/* ── Instruction Card (hero zone) ── */
+/* ── Instruction Card ── */
 #instruction-card {
   background: var(--vscode-editor-inactiveSelectionBackground);
   border: 1px solid var(--vscode-charts-blue);
@@ -189,19 +167,6 @@ body {
   color: var(--vscode-foreground);
   font-weight: 600;
 }
-#instruction-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding-left: 18px;
-  margin: 0;
-}
-#instruction-steps li {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--vscode-foreground);
-  padding-left: 4px;
-}
 #instruction-subtext {
   font-size: 12px;
   color: var(--vscode-descriptionForeground);
@@ -209,41 +174,6 @@ body {
   border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
   padding-top: 8px;
 }
-#instruction-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 2px;
-}
-.instruction-btn {
-  width: 100%;
-  border: none;
-  border-radius: 4px;
-  padding: 7px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--vscode-font-family);
-  text-align: center;
-  transition: opacity 0.15s ease;
-}
-.instruction-btn:hover {
-  opacity: 0.85;
-}
-.instruction-btn--primary {
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
-}
-.instruction-btn--primary:hover {
-  background: var(--vscode-button-hoverBackground);
-  opacity: 1;
-}
-.instruction-btn--secondary {
-  background: transparent;
-  color: var(--vscode-foreground);
-  border: 1px solid var(--vscode-sideBarSectionHeader-border);
-}
-
 /* ── Review Card ── */
 #review-card {
   background: var(--vscode-editor-inactiveSelectionBackground);
