@@ -28,6 +28,7 @@ export interface LearnerState {
   level: number;
   levelTitle: string;
   badges: string[];
+  badgeProgress?: Record<string, number>;
   streak: number;
   lastSession: string;
 }

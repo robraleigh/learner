@@ -244,7 +244,8 @@ When awarding XP or updating progress, write to both `state.json` (project-level
   "totalXP": 0,
   "level": 1,
   "levelTitle": "Debug Mode",
-  "badges": []
+  "badges": [],
+  "badgeProgress": {}
 }
 ```
 
@@ -270,15 +271,78 @@ When awarding XP or updating progress, write to both `state.json` (project-level
 | 9 | 10000 | Project Builder |
 | 10 | 15000 | Shipping Engineer |
 
-**Badges** (write to `state.json.badges` and `profile.json.badges` when earned):
-- `first-commit` — first `git commit`
-- `bug-squasher` — fixed a bug they found themselves
-- `explain-it-back` — accurately explained a concept back 3 times in a row
-- `librarian` — first `npm install` of a real package
-- `ship-it` — completed Build Map and wrote a README
-- `prompt-perfectionist` — Claude-generated code accepted without edits 3 times
-- `challenger` — completed 3 challenge exercises
-- `rubber-duck` — used `/debug` and found the bug before Claude pointed to it
+**Badges** — earned only after clearly demonstrating a skill multiple times. Never award on first use unless the target is 1.
+
+When awarding: write the ID to `state.json.badges` **and** `profile.json.badges`. Track progress in `state.json.badgeProgress` (a `{ badgeId: count }` map). When `count >= target`, move to `badges` and remove from `badgeProgress`.
+
+**When giving a task**, identify the most relevant badge the student is working toward (highest `count/target` ratio among stage-appropriate badges) and include in `currentInstruction.subtext`:
+> "Working toward: ⚒️ Function Forger (2/3)"
+
+**Stage gating**: Only surface badges where `minStage ≤ currentStage` in working-toward annotations. The sidebar locks higher-stage badges visually.
+
+**Project-type gating**: HTML/CSS track badges apply only to web and mobile projects — don't surface them for CLI students.
+
+| ID | Label | Tier | Target | Min Stage | Trigger |
+|---|---|---|---|---|---|
+| **HTML / Markup** | | | | | |
+| `markup-apprentice` | 🏗️ Markup Apprentice | bronze | 3 | 1 | Write HTML elements correctly across 3 tasks |
+| `semantic-scholar` | 📐 Semantic Scholar | silver | 3 | 2 | Use semantic elements: header, nav, main, footer, article |
+| `form-builder` | 📋 Form Builder | gold | 1 | 2 | Build a complete working HTML form |
+| **CSS** | | | | | |
+| `style-starter` | 🎨 Style Starter | bronze | 3 | 1 | Write CSS rules from scratch across 3 tasks |
+| `selector-savvy` | 🎯 Selector Savvy | silver | 3 | 2 | Use class, ID, and element selectors correctly |
+| `flex-apprentice` | 📦 Flex Apprentice | silver | 3 | 2 | Use flexbox layout correctly 3 times |
+| `variable-keeper` | 🧮 Variable Keeper | silver | 1 | 2 | Use CSS custom properties in a project |
+| `responsive-designer` | 📱 Responsive Designer | gold | 2 | 4 | Write media queries that work correctly |
+| `css-architect` | 🏛️ CSS Architect | gold | 1 | 4 | Combine flexbox/grid + variables + media query in one project |
+| **JavaScript — Fundamentals** | | | | | |
+| `variable-vault` | 🗃️ Variable Vault | bronze | 3 | 1 | Use const/let correctly and explain the difference |
+| `conditional-navigator` | 🚦 Conditional Navigator | bronze | 5 | 1 | Write correct if/else or switch statements |
+| `loop-rider` | 🔄 Loop Rider | silver | 3 | 2 | Write a loop correctly and explain it |
+| `array-handler` | 🛒 Array Handler | silver | 4 | 2 | Use array methods (push, pop, filter, map) correctly |
+| **JavaScript — Functions** | | | | | |
+| `function-forger` | ⚒️ Function Forger | bronze | 3 | 2 | Write a function from scratch (not from a template) |
+| `return-master` | ↩️ Return Master | silver | 3 | 2 | Write functions with return values and explain them |
+| `function-whisperer` | 🧙 Function Whisperer | gold | 2 | 3 | Write functions with multiple parameters and explain all parts |
+| **JavaScript — Objects** | | | | | |
+| `object-maker` | 🗂️ Object Maker | bronze | 3 | 2 | Create objects with multiple properties and access them |
+| `object-architect` | 🧱 Object Architect | silver | 3 | 3 | Build a complex object-based data structure and explain it |
+| `data-modeller` | 🗄️ Data Modeller | gold | 1 | 5 | Design a data structure for a real feature and justify the shape |
+| **Git & Workflow** | | | | | |
+| `first-commit` | 💾 First Commit | bronze | 1 | 0 | Make their first git commit |
+| `branch-explorer` | 🌿 Branch Explorer | silver | 1 | 3 | Create a branch, make changes, and merge it |
+| `git-historian` | 🔍 Git Historian | silver | 1 | 3 | Use git log and git diff to find something specific |
+| **Debugging** | | | | | |
+| `log-detective` | 🔦 Log Detective | bronze | 3 | 1 | Use console.log strategically to find a bug |
+| `bug-squasher` | 🐛 Bug Squasher | silver | 1 | 2 | Fix a bug they found themselves |
+| `rubber-duck` | 🦆 Rubber Duck | gold | 1 | 3 | Found bug via /debug before Claude pointed to it |
+| **Data & Storage** | | | | | |
+| `json-handler` | 📄 JSON Handler | bronze | 3 | 4 | Read/write JSON and explain its structure |
+| `file-wrangler` | 📂 File Wrangler | silver | 2 | 5 | Use the fs module to read and write files |
+| `db-apprentice` | 🛢️ DB Apprentice | silver | 3 | 5 | Write correct SQL queries (INSERT, SELECT, WHERE) |
+| `schema-designer` | 📊 Schema Designer | gold | 1 | 5 | Design a data schema and justify field choices |
+| `query-master` | 🔎 Query Master | gold | 2 | 5 | Write queries with filtering, ordering, or joining |
+| **APIs & Networking** | | | | | |
+| `fetch-first` | 🌐 Fetch First | bronze | 1 | 7 | Make a successful API call with fetch |
+| `async-rider` | ⏳ Async Rider | silver | 3 | 7 | Use async/await correctly and explain why it's needed |
+| `api-reader` | 📡 API Reader | silver | 2 | 7 | Read API docs and identify the right endpoint |
+| `error-handler` | 🛡️ Error Handler | gold | 2 | 7 | Handle API errors gracefully with try/catch |
+| **DevOps & Deployment** | | | | | |
+| `package-publisher` | 📤 Package Publisher | bronze | 1 | 4 | Write a working package.json with correct scripts |
+| `script-runner` | ⚙️ Script Runner | silver | 2 | 4 | Write and run custom npm scripts |
+| `env-aware` | 🔐 Env Aware | silver | 1 | 6 | Use environment variables correctly (.env, process.env) |
+| `ship-to-web` | 🌍 Ship to Web | gold | 1 | 7 | Deploy a project to a live URL |
+| **Architecture** | | | | | |
+| `module-maker` | 🧩 Module Maker | bronze | 2 | 4 | Split code into separate files and import correctly |
+| `separation-artist` | ✂️ Separation Artist | silver | 2 | 5 | Separate data, logic, and UI into different files |
+| `architect` | 🔭 Architect | gold | 1 | 6 | Design a multi-file project structure before writing any code |
+| **Learning & Process** | | | | | |
+| `explain-it-back` | 💬 Explain-It-Back | silver | 3 | 0 | Accurately explain a concept back in own words, 3 times |
+| `librarian` | 📚 The Librarian | bronze | 1 | 4 | First npm install of a real package |
+| `specification-writer` | 📝 Specification Writer | silver | 2 | 4 | Use specification-first prompting correctly |
+| `prompt-perfectionist` | ✨ Prompt Perfectionist | gold | 3 | 2 | Claude-generated code accepted without edits, 3 times |
+| `challenger` | ⚡ Challenger | gold | 3 | 2 | Complete 3 challenge exercises |
+| `ship-it` | 🚀 Ship It | gold | 1 | 2 | Complete the Build Map and write a README |
 
 ---
 

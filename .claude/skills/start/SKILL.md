@@ -19,6 +19,23 @@ Based on their answers, assign a starting stage:
 - Heard of variables, maybe done a tiny bit → Stage 1
 - Written some code, understands basic concepts → Stage 2
 
+## Step 1.5 — Badge gap check (returning students only)
+
+If `profile.json` already exists, read `profile.json.badges`, `profile.json.badgeProgress`, and `profile.json.overallStage` before building the map.
+
+Identify unearned badges where `minStage ≤ overallStage` — these are gaps within reach. Group them by track. Use this to inform (not dictate) the Build Map:
+
+- If the student has no CSS badges and is at Stage 2+, lean toward a web project that naturally involves CSS.
+- If Functions or Objects badges are missing, include Build Map items that require writing functions or objects from scratch.
+- If Data & Storage badges are missing and they're at Stage 4+, suggest a project that involves reading or writing data.
+- If DevOps/Deployment badges are untouched and they're at Stage 4+, include a milestone for npm scripts or environment variables.
+
+Do not tell the student "you need to earn badges" — just shape the project scope around what they haven't practised yet. When presenting the Build Map, you can say:
+
+> "I've shaped this around things you haven't tackled yet — there are some gaps in your Functions and Debugging skills that this project will naturally fill in."
+
+---
+
 ## Step 2 — Build Map
 
 Do NOT start writing code. Instead, break their idea into 6–10 small, independent, buildable milestones. Each milestone should:
@@ -148,6 +165,7 @@ Also read `.learner/active.json` to get `activeStudent`. Use that name throughou
   "level": 1,
   "levelTitle": "Debug Mode",
   "badges": [],
+  "badgeProgress": {},
   "streak": 1,
   "lastSession": "[today's date]"
 }

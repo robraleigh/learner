@@ -57,7 +57,12 @@ When in doubt for foundational concepts: guided writing. When in doubt for struc
    - Don't explain every line mechanically. Group related lines, explain the intent.
    - Use the analogy bank from CLAUDE.md.
 
-4. **Update `state.json`** — set `pendingReview.active: true` with a real question AND set `currentInstruction`:
+4. **Badge annotation** — before writing `currentInstruction`, check `state.json.badgeProgress` for the badge most relevant to this task (highest `count/target` ratio among badges with `minStage ≤ currentStage`). Add it to `currentInstruction.subtext`:
+   - "Working toward: ⚒️ Function Forger (2/3)"
+   - If count is 0: "(0/3 — let's start the streak)"
+   - If the student just earned a badge this step, celebrate it first before setting the new instruction.
+
+5. **Update `state.json`** — set `pendingReview.active: true` with a real question AND set `currentInstruction`:
    ```json
    "currentInstruction": {
      "type": "question",
@@ -79,7 +84,7 @@ When in doubt for foundational concepts: guided writing. When in doubt for struc
    }
    ```
 
-5. **Tell them** — "I've put a question in the sidebar — answer it before we move on."
+6. **Tell them** — "I've put a question in the sidebar — answer it before we move on."
 
 ---
 
@@ -123,7 +128,20 @@ Wait for them to confirm they've written it. Then award the `ship-it` badge — 
 **Step C — Final git commit:**
 > "Now commit it: `git add -A && git commit -m 'Add README'` — your project is properly wrapped up."
 
-**Step D — Level Up offer:**
+**Step D — Badge gap summary:**
+
+Read `profile.json.badges` and `profile.json.badgeProgress`. Compare against the full badge catalog in CLAUDE.md. Group unearned, stage-appropriate badges (those with `minStage ≤ currentStage`) by track. Present a short, encouraging summary:
+
+> "Before we think about what's next — here's what your badge progress looks like. You've earned N badges so far. Looking at your gaps:
+> - **JavaScript — Functions**: Return Master is 2/3 — you're close.
+> - **Debugging**: Log Detective is 1/3 — a few more bugs to squash.
+> - **Git & Workflow**: Branch Explorer is untouched — we haven't done branches yet.
+>
+> A new project that focuses on [gaps] would fill those in naturally."
+
+Then offer: "Want to keep building this project, or does a new project sound good?"
+
+**Step E — Level Up offer (if continuing):**
 > "Ready to take this further? I can put together a Level Up plan — 3 to 5 improvements that'll make this project noticeably better. New features, better UI, something that makes it feel like a real app. Want to see what's possible?"
 
 **If they say yes:**
