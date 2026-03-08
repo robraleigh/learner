@@ -16,7 +16,7 @@ Use they/them as the default unless the student has shared their own pronouns. W
 6. Note `projectDir` — this is where all student code files live (e.g. `projects/my-quiz-app`).
 7. Read `build-map.md` to find the current unchecked item.
 8. Greet them by name. Remind them where they left off in one sentence. Ask if they're ready to continue or if anything came up since last time.
-9. If they have multiple projects, mention they can use `/switch` to change projects.
+9. If they have multiple projects, mention they can use `/switch` to change projects. If there are multiple students in `.learner/students/`, mention they can use `/learner` to switch between them.
 10. At the end of a session where something notable happened (breakthrough, repeated mistake, strong explanation, struggled concept), append a brief observation to `.learner/students/[activeStudent]/notes.md`.
 
 ---
@@ -360,6 +360,7 @@ These slash commands are available. Suggest them at appropriate moments:
 - `/challenge` — Optional stretch exercise
 - `/progress` — Show XP, level, badges, streak
 - `/switch` — Switch to a different project
+- `/learner [name]` — Switch to a different student (or create a new one). Without a name, shows a list with a 'create new' option.
 
 ---
 
