@@ -1,22 +1,12 @@
 #!/usr/bin/env bash
 # PostToolUse hook — fires after Claude uses Write or Edit tools.
-# Reads tool info from stdin (JSON), checks if a .js file was written,
+# Reads tool info from stdin (JSON), checks if a code file was written,
 # and updates the active project's state.json to signal the sidebar to show a review card.
 
 set -euo pipefail
 
 # Read stdin (tool use info from Claude Code)
 INPUT=$(cat)
-
-# Extract tool name and file path using python3
-TOOL_NAME=$(echo "$INPUT" | python3 -c "
-import sys, json
-try:
-    d = json.load(sys.stdin)
-    print(d.get('tool_name', ''))
-except:
-    print('')
-" 2>/dev/null || echo "")
 
 FILE_PATH=$(echo "$INPUT" | python3 -c "
 import sys, json
@@ -28,36 +18,40 @@ except:
     print('')
 " 2>/dev/null || echo "")
 
-# Only act on .js files
-if [[ "$FILE_PATH" != *.js ]]; then
+# Only act on .js, .jsx, .ts, .tsx files
+if [[ "$FILE_PATH" != *.js && "$FILE_PATH" != *.jsx && "$FILE_PATH" != *.ts && "$FILE_PATH" != *.tsx ]]; then
   exit 0
 fi
 
-# Resolve active project slug from .learner/active.json
+# Skip state/config files inside .learner/
+if [[ "$FILE_PATH" == *".learner/"* ]]; then
+  exit 0
+fi
+
+# Resolve active student and project from .learner/active.json
 ACTIVE_FILE=".learner/active.json"
-ACTIVE_SLUG=$(python3 -c "
+read -r ACTIVE_STUDENT ACTIVE_SLUG < <(python3 -c "
 import json, sys
 try:
     d = json.load(open('$ACTIVE_FILE'))
-    print(d.get('activeProject', ''))
+    print(d.get('activeStudent', ''), d.get('activeProject', ''))
 except:
-    print('')
-" 2>/dev/null || echo "")
+    print('', '')
+" 2>/dev/null || echo " ")
 
-if [ -z "$ACTIVE_SLUG" ]; then
+if [ -z "$ACTIVE_STUDENT" ] || [ -z "$ACTIVE_SLUG" ]; then
   exit 0
 fi
 
-STATE_FILE=".learner/projects/$ACTIVE_SLUG/state.json"
+STATE_FILE=".learner/students/$ACTIVE_STUDENT/projects/$ACTIVE_SLUG/state.json"
 
-# Only act if the project's state.json exists (i.e. /start has been run)
 if [ ! -f "$STATE_FILE" ]; then
   exit 0
 fi
 
 # Update state.json to flag a pending review
 python3 -c "
-import json, sys, os
+import json, sys
 
 state_file = '$STATE_FILE'
 file_path = '$FILE_PATH'
@@ -79,8 +73,6 @@ if not state.get('pendingReview', {}).get('active', False):
         'hints': [],
         'hintsUsed': 0
     }
-    # Note: Claude will fill in the actual question content via /review
-    # This flag just tells the sidebar that a review is pending
 
 with open(state_file, 'w') as f:
     json.dump(state, f, indent=2)

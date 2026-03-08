@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import {
   LearnerState,
   BuildMapItem,
+  CurrentInstruction,
   readState,
   writePendingAnswer,
   parseBuildMap,
@@ -95,6 +96,7 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
       buildMap,
       setUp,
       levelInfo,
+      currentInstruction: state?.currentInstruction ?? null,
     });
   }
 
@@ -147,6 +149,16 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
           <div id="xp-bar"></div>
         </div>
         <div id="xp-label"></div>
+      </div>
+
+      <!-- Instruction Card (shown when Claude sets a currentInstruction) -->
+      <div id="instruction-card" class="hidden">
+        <div id="instruction-header">
+          <span id="instruction-type-badge"></span>
+          <span id="instruction-header-label"></span>
+        </div>
+        <div id="instruction-text"></div>
+        <div id="instruction-subtext"></div>
       </div>
 
       <!-- Review Card (shown when a review is pending) -->

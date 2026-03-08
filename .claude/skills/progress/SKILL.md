@@ -1,11 +1,14 @@
 ---
 description: Show the student's current progress — XP, level, badges, streak, Build Map completion, and a summary of what they now know.
-allowed-tools: Read
 ---
 
 # /progress Skill
 
-Read `.learner/state.json`, `.learner/progress.json`, and `.learner/build-map.md`.
+Read `.learner/active.json` to get `activeStudent` and `activeProject`. Then read:
+- `.learner/students/[activeStudent]/projects/[activeProject]/state.json`
+- `.learner/students/[activeStudent]/projects/[activeProject]/progress.json`
+- `.learner/students/[activeStudent]/projects/[activeProject]/build-map.md`
+- `.learner/students/[activeStudent]/profile.json`
 
 Display a progress summary in the chat. Format it clearly — use headers and bullet points, not a wall of text.
 
@@ -37,6 +40,10 @@ What you know now that you didn't before:
   - How to write a function that takes input and returns output
   - How === works (and why it's different from =)
   - How to use a loop to repeat code
+
+Across all your projects:
+  - Concepts learned: [list from profile.json.conceptsLearned]
+  - [If projectsCompleted is non-empty]: "You've completed [N] project(s): [names]"
 ---
 ```
 
@@ -44,9 +51,11 @@ What you know now that you didn't before:
 
 Generate this dynamically based on the glossary and covered Build Map items — not a generic list. Be specific to what they actually built.
 
+Also pull `conceptsLearned` and `weakAreas` from `profile.json` for the cross-project view. If `weakAreas` is non-empty, include a gentle note: "One area to keep practising: [area]."
+
 ## Milestone Messages
 
-Add a short motivating message based on where she is:
+Add a short motivating message based on where they are:
 - Under 200 XP: "You're just getting started — the first few items are the hardest."
 - 200–1000 XP: "You're building real momentum. Keep going."
 - 1000–3500 XP: "You've got the fundamentals. This is where it starts getting interesting."

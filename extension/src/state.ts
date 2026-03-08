@@ -1,6 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+export interface CurrentInstruction {
+  type: 'task' | 'explanation' | 'question';
+  text: string;
+  subtext: string;
+}
+
 export interface PendingReview {
   active: boolean;
   filePath: string;
@@ -16,6 +22,7 @@ export interface LearnerState {
   studentName: string;
   currentStage: number;
   currentBuildMapItem: number;
+  currentInstruction: CurrentInstruction | null;
   pendingReview: PendingReview;
   xp: number;
   level: number;
@@ -73,25 +80,28 @@ export function getLevelForXP(xp: number): { level: number; title: string; nextL
   };
 }
 
-/** Returns the active project slug from .learner/active.json, or null if not set. */
-export function getActiveSlug(workspaceRoot: string): string | null {
+/** Returns { activeStudent, activeProject } from .learner/active.json, or nulls if not set. */
+export function getActiveIds(workspaceRoot: string): { activeStudent: string | null; activeProject: string | null } {
   const activePath = path.join(workspaceRoot, '.learner', 'active.json');
   try {
     const raw = fs.readFileSync(activePath, 'utf-8');
     const data = JSON.parse(raw);
-    return data.activeProject || null;
+    return {
+      activeStudent: data.activeStudent || null,
+      activeProject: data.activeProject || null,
+    };
   } catch {
-    return null;
+    return { activeStudent: null, activeProject: null };
   }
 }
 
-/** Returns the state directory for the active project: .learner/projects/[slug] */
+/** Returns the state directory for the active project: .learner/students/[student]/projects/[slug] */
 function getProjectStateDir(workspaceRoot: string): string | null {
-  const slug = getActiveSlug(workspaceRoot);
-  if (!slug) {
+  const { activeStudent, activeProject } = getActiveIds(workspaceRoot);
+  if (!activeStudent || !activeProject) {
     return null;
   }
-  return path.join(workspaceRoot, '.learner', 'projects', slug);
+  return path.join(workspaceRoot, '.learner', 'students', activeStudent, 'projects', activeProject);
 }
 
 export function readState(workspaceRoot: string): LearnerState | null {

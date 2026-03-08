@@ -34,6 +34,11 @@ const $studentName = /** @type {HTMLElement} */ (document.getElementById('studen
 const $levelBadge = /** @type {HTMLElement} */ (document.getElementById('level-badge'));
 const $xpBar = /** @type {HTMLElement} */ (document.getElementById('xp-bar'));
 const $xpLabel = /** @type {HTMLElement} */ (document.getElementById('xp-label'));
+const $instructionCard = /** @type {HTMLElement} */ (document.getElementById('instruction-card'));
+const $instructionTypeBadge = /** @type {HTMLElement} */ (document.getElementById('instruction-type-badge'));
+const $instructionHeaderLabel = /** @type {HTMLElement} */ (document.getElementById('instruction-header-label'));
+const $instructionText = /** @type {HTMLElement} */ (document.getElementById('instruction-text'));
+const $instructionSubtext = /** @type {HTMLElement} */ (document.getElementById('instruction-subtext'));
 const $reviewCard = /** @type {HTMLElement} */ (document.getElementById('review-card'));
 const $reviewLevelBadge = /** @type {HTMLElement} */ (document.getElementById('review-level-badge'));
 const $reviewQuestion = /** @type {HTMLElement} */ (document.getElementById('review-question'));
@@ -77,7 +82,7 @@ $reviewAnswer.addEventListener('keydown', (e) => {
 window.addEventListener('message', (event) => {
   const message = event.data;
   if (message.type === 'stateUpdate') {
-    render(message.state, message.buildMap, message.setUp, message.levelInfo);
+    render(message.state, message.buildMap, message.setUp, message.levelInfo, message.currentInstruction);
   }
 });
 
@@ -87,8 +92,9 @@ window.addEventListener('message', (event) => {
  * @param {Array} buildMap
  * @param {boolean} setUp
  * @param {{ level: number, title: string, nextLevelXP: number }} levelInfo
+ * @param {{ type: string, text: string, subtext: string }|null} currentInstruction
  */
-function render(state, buildMap, setUp, levelInfo) {
+function render(state, buildMap, setUp, levelInfo, currentInstruction) {
   if (!setUp || !state) {
     $notStarted.classList.remove('hidden');
     $mainContent.classList.add('hidden');
@@ -112,6 +118,19 @@ function render(state, buildMap, setUp, levelInfo) {
   $xpLabel.textContent = levelInfo.level >= 10
     ? `${state.xp} XP — Max Level!`
     : `${state.xp} / ${nextLevelXP} XP`;
+
+  // Instruction card
+  if (currentInstruction && currentInstruction.text) {
+    $instructionCard.classList.remove('hidden');
+    const typeLabels = { task: 'Do this', explanation: 'Read this', question: 'Answer this' };
+    $instructionTypeBadge.textContent = currentInstruction.type || 'task';
+    $instructionHeaderLabel.textContent = typeLabels[currentInstruction.type] || 'Next step';
+    $instructionText.textContent = currentInstruction.text;
+    $instructionSubtext.textContent = currentInstruction.subtext || '';
+    $instructionSubtext.classList.toggle('hidden', !currentInstruction.subtext);
+  } else {
+    $instructionCard.classList.add('hidden');
+  }
 
   // Review card
   const review = state.pendingReview;

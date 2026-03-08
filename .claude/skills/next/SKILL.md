@@ -1,11 +1,10 @@
 ---
 description: Advance to the next item on the Build Map. Determines whether the item should be student-written or generate-and-review, teaches the concept, and marks complete only after demonstrated understanding.
-allowed-tools: Read, Write, Edit
 ---
 
 # /next Skill
 
-Read `.learner/build-map.md` to find the first unchecked item. Read `.learner/config.json` for the student's current stage and `projectDir`. All code files you write go inside `projectDir` (e.g. `projects/my-quiz-app/quiz.js`). Then work through that item using the correct mode.
+Read `.learner/active.json` to get `activeStudent` and `activeProject`. All state files for this session live at `.learner/students/[activeStudent]/projects/[activeProject]/`. Read `build-map.md` to find the first unchecked item. Read `config.json` for the student's current stage, `projectDir`, and `stack`. All code files you write go inside `projectDir` (e.g. `projects/my-quiz-app/quiz.js`). Then work through that item using the correct mode.
 
 ## Determine the Mode
 
@@ -58,8 +57,13 @@ When in doubt for foundational concepts: guided writing. When in doubt for struc
    - Don't explain every line mechanically. Group related lines, explain the intent.
    - Use the analogy bank from CLAUDE.md.
 
-4. **Update `.learner/state.json`** — set `pendingReview.active: true` with a real question:
+4. **Update `state.json`** — set `pendingReview.active: true` with a real question AND set `currentInstruction`:
    ```json
+   "currentInstruction": {
+     "type": "question",
+     "text": "Answer the question in the sidebar before we move on.",
+     "subtext": ""
+   },
    "pendingReview": {
      "active": true,
      "filePath": "projects/my-quiz-app/quiz.js",
@@ -86,12 +90,64 @@ Only mark an item complete when:
 - The code actually works (they've run it)
 
 To mark complete:
-1. Update `.learner/build-map.md` — change `- [ ]` to `- [x]` for the current item
-2. Update `.learner/state.json` — increment `currentBuildMapItem`, set `pendingReview.active: false`
-3. Award 100 XP — update `xp` in both `state.json` and `progress.json`
+1. Update `build-map.md` — change `- [ ]` to `- [x]` for the current item
+2. Update `state.json` — increment `currentBuildMapItem`, set `pendingReview.active: false`, set `currentInstruction: null`
+3. Award 100 XP — update `xp` in both `state.json` and `profile.json` (`.learner/students/[activeStudent]/profile.json`)
 4. Check for level up — compare new XP to level thresholds in CLAUDE.md
 5. Celebrate specifically — name the skill they just earned, not generic praise.
    - "That's your `checkAnswer` function working. You just wrote a function that takes input, makes a decision, and returns a result. That pattern — input → decision → output — is in almost every program ever written."
+
+6. **Prompt a git commit** — "Before we start the next item, let's save this with git. Every time we finish a step, we commit — it's a habit every developer builds."
+   - Suggest a commit message based on what they built: `git add -A && git commit -m "Add answer checking function"`
+   - At Stage 0–2: briefly explain what each part does ("git add stages your files — it's saying 'include these'; git commit saves a snapshot with a label")
+   - At Stage 3+: ask them to write their own commit message first, then give feedback on it
+   - If it's their first commit ever: award the `first-commit` badge, update `profile.json.badges` and `state.json.badges`
+
+---
+
+## If This Was the Last Item
+
+After step 6 (git commit), check `build-map.md` — if there are no remaining `- [ ]` items (excluding any items under a `## Level Up` section that was already appended), the student has completed their project.
+
+### Project completion flow
+
+**Step A — Celebrate the finish:**
+Name what they built specifically. Not "great job" — describe what the project does, what they built, what it took.
+> "That's it — [Project Name] is done. You started from zero and built a [quiz app / mobile tracker / whatever]. That took [N] sessions, and you wrote real code every step of the way."
+
+**Step B — README prompt:**
+> "Before anything else — let's write a README. Run `touch README.md` in your project folder, then open it and add three things: what the project does, how to run it, and one thing you learned building it. That's what every real project on GitHub has. Takes about 5 minutes."
+
+Wait for them to confirm they've written it. Then award the `ship-it` badge — update `profile.json.badges` and `state.json.badges`.
+
+**Step C — Final git commit:**
+> "Now commit it: `git add -A && git commit -m 'Add README'` — your project is properly wrapped up."
+
+**Step D — Level Up offer:**
+> "Ready to take this further? I can put together a Level Up plan — 3 to 5 improvements that'll make this project noticeably better. New features, better UI, something that makes it feel like a real app. Want to see what's possible?"
+
+**If they say yes:**
+
+1. Read `profile.json.weakAreas` and `profile.json.conceptsLearned`.
+2. Generate 3–5 milestones that:
+   - Each introduce one concept slightly beyond what was covered
+   - Aim for visible, shareable results
+   - Include at least one milestone that reinforces a weak area (if any)
+3. Continue numbering from the last item (e.g. if the map had 6 items, start at 7).
+4. Append to `build-map.md`:
+   ```markdown
+
+   ## Level Up
+
+   - [ ] 7. [First extension milestone]
+   - [ ] 8. [Second extension milestone]
+   - [ ] 9. [Third extension milestone]
+   ```
+5. Update `state.json`: add `"projectPhase": "extension"`. The sidebar will pick up the new items automatically via the existing build map parser.
+6. Say: "Here's your Level Up plan. The first item is [N]: [description]. Ready?"
+
+**If they say no:**
+> "That's completely fine. Use `/start` to begin something new whenever you're ready, or `/challenge` if you want a stretch exercise. Either way — you shipped a project. That's more than most people ever do."
 
 ---
 
