@@ -258,15 +258,22 @@ function render(state, buildMap, setUp, levelInfo, currentInstruction, projects)
     ? `${state.xp} XP — Max Level!`
     : `${state.xp} / ${nextLevelXP} XP`;
 
-  // Instruction card
-  if (currentInstruction && currentInstruction.text) {
+  // Instruction card — use explicit instruction if set, otherwise fall back to current build map item
+  const currentBuildItem = buildMap.find((/** @type {any} */ i) => i.current);
+  const effectiveInstruction = (currentInstruction && currentInstruction.text)
+    ? currentInstruction
+    : currentBuildItem
+      ? { type: 'task', text: currentBuildItem.text, subtext: null }
+      : null;
+
+  if (effectiveInstruction) {
     $instructionCard.classList.remove('hidden');
     const typeLabels = { task: 'Do this', explanation: 'Read this', question: 'Answer this' };
-    $instructionTypeBadge.textContent = currentInstruction.type || 'task';
-    $instructionHeaderLabel.textContent = typeLabels[currentInstruction.type] || 'Next step';
-    $instructionText.textContent = currentInstruction.text;
-    $instructionSubtext.textContent = currentInstruction.subtext || '';
-    $instructionSubtext.classList.toggle('hidden', !currentInstruction.subtext);
+    $instructionTypeBadge.textContent = effectiveInstruction.type || 'task';
+    $instructionHeaderLabel.textContent = typeLabels[effectiveInstruction.type] || 'Next step';
+    $instructionText.textContent = effectiveInstruction.text;
+    $instructionSubtext.textContent = effectiveInstruction.subtext || '';
+    $instructionSubtext.classList.toggle('hidden', !effectiveInstruction.subtext);
   } else {
     $instructionCard.classList.add('hidden');
   }

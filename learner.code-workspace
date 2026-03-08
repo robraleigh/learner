@@ -30,7 +30,7 @@
     "terminal.integrated.fontSize": 14,
     "git.decorations.enabled": true,
     "chat.commandCenter.enabled": false,
-    "workbench.secondarySideBar.visible": false,
+    "workbench.secondarySideBar.visible": true,
     "github.copilot.enable": {
       "*": false
     }

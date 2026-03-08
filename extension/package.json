@@ -14,7 +14,7 @@
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
-      "activitybar": [
+      "secondarySideBar": [
         {
           "id": "learner-container",
           "title": "Learner",
