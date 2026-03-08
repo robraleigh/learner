@@ -1,6 +1,6 @@
 # Learner
 
-An interactive coding environment for beginners, built on Claude Code and VS Code. Designed for a student who has a project idea and wants to build it — while actually learning how the code works.
+An interactive coding environment for beginners (ages 13–16), built on Claude Code and VS Code. Designed for a student who has a project idea and wants to build it — while actually learning how the code works.
 
 ## What It Does
 
@@ -106,10 +106,18 @@ extension/               # Source for the sidebar VS Code extension
   src/                   # TypeScript source
   webview/               # Sidebar HTML/CSS/JS
 
+projects/                # Your code lives here (gitignored)
+  my-quiz-app/           # Each project gets its own folder and git repo
+    .git/
+    index.js
+    ...
+
 .learner/                # Your progress data (created after /start)
-  config.json
+  config.json            # Includes projectDir pointing to your active project
   build-map.md
   progress.json
   glossary.md
   state.json
 ```
+
+Each project in `projects/` is its own git repository, so you can push your work to GitHub independently of this teaching setup.
