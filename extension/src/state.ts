@@ -73,8 +73,33 @@ export function getLevelForXP(xp: number): { level: number; title: string; nextL
   };
 }
 
+/** Returns the active project slug from .learner/active.json, or null if not set. */
+export function getActiveSlug(workspaceRoot: string): string | null {
+  const activePath = path.join(workspaceRoot, '.learner', 'active.json');
+  try {
+    const raw = fs.readFileSync(activePath, 'utf-8');
+    const data = JSON.parse(raw);
+    return data.activeProject || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Returns the state directory for the active project: .learner/projects/[slug] */
+function getProjectStateDir(workspaceRoot: string): string | null {
+  const slug = getActiveSlug(workspaceRoot);
+  if (!slug) {
+    return null;
+  }
+  return path.join(workspaceRoot, '.learner', 'projects', slug);
+}
+
 export function readState(workspaceRoot: string): LearnerState | null {
-  const statePath = path.join(workspaceRoot, '.learner', 'state.json');
+  const dir = getProjectStateDir(workspaceRoot);
+  if (!dir) {
+    return null;
+  }
+  const statePath = path.join(dir, 'state.json');
   try {
     const raw = fs.readFileSync(statePath, 'utf-8');
     return JSON.parse(raw) as LearnerState;
@@ -90,6 +115,7 @@ export function writePendingAnswer(
   questionLevel: number,
   hintsUsed: number
 ): void {
+  // pending-answer.json stays at the root .learner/ — it's ephemeral and read by the hook
   const answerPath = path.join(workspaceRoot, '.learner', 'pending-answer.json');
   const data = {
     question,
@@ -101,7 +127,11 @@ export function writePendingAnswer(
 }
 
 export function parseBuildMap(workspaceRoot: string): BuildMapItem[] {
-  const buildMapPath = path.join(workspaceRoot, '.learner', 'build-map.md');
+  const dir = getProjectStateDir(workspaceRoot);
+  if (!dir) {
+    return [];
+  }
+  const buildMapPath = path.join(dir, 'build-map.md');
   try {
     const raw = fs.readFileSync(buildMapPath, 'utf-8');
     const lines = raw.split('\n');
@@ -138,6 +168,9 @@ export function parseBuildMap(workspaceRoot: string): BuildMapItem[] {
 }
 
 export function isSetUp(workspaceRoot: string): boolean {
-  const configPath = path.join(workspaceRoot, '.learner', 'config.json');
-  return fs.existsSync(configPath);
+  const dir = getProjectStateDir(workspaceRoot);
+  if (!dir) {
+    return false;
+  }
+  return fs.existsSync(path.join(dir, 'config.json'));
 }

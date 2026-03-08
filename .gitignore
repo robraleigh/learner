@@ -1,9 +1,6 @@
 # Student progress data — not committed so each student has their own
-.learner/config.json
-.learner/build-map.md
-.learner/progress.json
-.learner/glossary.md
-.learner/state.json
+.learner/active.json
+.learner/projects/
 .learner/pending-answer.json
 
 # Keep the directory itself

@@ -10,22 +10,22 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerWebviewViewProvider(LearnerViewProvider.viewType, provider)
   );
 
-  // Watch .learner/state.json — refreshes sidebar whenever Claude updates it
   if (workspaceRoot) {
-    const stateWatcher = vscode.workspace.createFileSystemWatcher(
-      new vscode.RelativePattern(workspaceRoot, '.learner/state.json')
+    // Watch active.json — refreshes sidebar when the student switches projects
+    const activeWatcher = vscode.workspace.createFileSystemWatcher(
+      new vscode.RelativePattern(workspaceRoot, '.learner/active.json')
     );
-    stateWatcher.onDidChange(() => provider.refresh());
-    stateWatcher.onDidCreate(() => provider.refresh());
-    context.subscriptions.push(stateWatcher);
+    activeWatcher.onDidChange(() => provider.refresh());
+    activeWatcher.onDidCreate(() => provider.refresh());
+    context.subscriptions.push(activeWatcher);
 
-    // Also watch build-map.md so the checklist updates when items are completed
-    const buildMapWatcher = vscode.workspace.createFileSystemWatcher(
-      new vscode.RelativePattern(workspaceRoot, '.learner/build-map.md')
+    // Watch all per-project state files — catches state.json and build-map.md changes for any project
+    const projectsWatcher = vscode.workspace.createFileSystemWatcher(
+      new vscode.RelativePattern(workspaceRoot, '.learner/projects/**')
     );
-    buildMapWatcher.onDidChange(() => provider.refresh());
-    buildMapWatcher.onDidCreate(() => provider.refresh());
-    context.subscriptions.push(buildMapWatcher);
+    projectsWatcher.onDidChange(() => provider.refresh());
+    projectsWatcher.onDidCreate(() => provider.refresh());
+    context.subscriptions.push(projectsWatcher);
   }
 }
 

@@ -1,6 +1,5 @@
 ---
 description: Start a new learning project. Runs a skill assessment, collaboratively builds a Build Map, and scaffolds all .learner/ state files. Run this once per project.
-allowed-tools: Read, Write
 ---
 
 # /start Skill
@@ -65,9 +64,11 @@ Before creating state files, set up the project folder.
 
 ## Step 4 — Scaffold State Files
 
-Once the project directory exists and `git init` is done, create these files:
+Once the project directory exists and `git init` is done, create these files.
 
-**.learner/config.json**
+All state files go in `.learner/projects/[slug]/` — one folder per project, so multiple projects can coexist without overwriting each other.
+
+**.learner/projects/[slug]/config.json**
 ```json
 {
   "studentName": "[their name, or 'you' if they didn't share it]",
@@ -79,7 +80,7 @@ Once the project directory exists and `git init` is done, create these files:
 }
 ```
 
-**.learner/build-map.md**
+**.learner/projects/[slug]/build-map.md**
 ```markdown
 # Build Map: [Project Name]
 
@@ -88,7 +89,7 @@ Once the project directory exists and `git init` is done, create these files:
 ...
 ```
 
-**.learner/progress.json**
+**.learner/projects/[slug]/progress.json**
 ```json
 {
   "xp": 0,
@@ -101,7 +102,7 @@ Once the project directory exists and `git init` is done, create these files:
 }
 ```
 
-**.learner/state.json**
+**.learner/projects/[slug]/state.json**
 ```json
 {
   "studentName": "[their name]",
@@ -125,7 +126,7 @@ Once the project directory exists and `git init` is done, create these files:
 }
 ```
 
-**.learner/glossary.md**
+**.learner/projects/[slug]/glossary.md**
 ```markdown
 # My Coding Glossary
 
@@ -133,6 +134,15 @@ Terms I've learned, in plain English.
 
 ---
 ```
+
+After creating the project state files, update (or create) **.learner/active.json** to point to this project:
+```json
+{ "activeProject": "[slug]" }
+```
+
+This tells the sidebar and hooks which project is currently active. If the student already has other projects, tell them: "I've set [Project Name] as your active project. You can switch back to another one anytime with `/switch`."
+
+---
 
 ## Step 5 — Introduce Item 1
 

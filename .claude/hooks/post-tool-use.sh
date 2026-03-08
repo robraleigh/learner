@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # PostToolUse hook — fires after Claude uses Write or Edit tools.
 # Reads tool info from stdin (JSON), checks if a .js file was written,
-# and updates .learner/state.json to signal the sidebar to show a review card.
+# and updates the active project's state.json to signal the sidebar to show a review card.
 
 set -euo pipefail
 
@@ -33,9 +33,24 @@ if [[ "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-STATE_FILE=".learner/state.json"
+# Resolve active project slug from .learner/active.json
+ACTIVE_FILE=".learner/active.json"
+ACTIVE_SLUG=$(python3 -c "
+import json, sys
+try:
+    d = json.load(open('$ACTIVE_FILE'))
+    print(d.get('activeProject', ''))
+except:
+    print('')
+" 2>/dev/null || echo "")
 
-# Only act if .learner/state.json exists (i.e. /start has been run)
+if [ -z "$ACTIVE_SLUG" ]; then
+  exit 0
+fi
+
+STATE_FILE=".learner/projects/$ACTIVE_SLUG/state.json"
+
+# Only act if the project's state.json exists (i.e. /start has been run)
 if [ ! -f "$STATE_FILE" ]; then
   exit 0
 fi

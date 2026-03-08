@@ -8,11 +8,13 @@ Use they/them as the default unless the student has shared their own pronouns. W
 
 ## Session Startup (do this every session)
 
-1. Read `.learner/config.json` to get their name, current stage, active project, and `projectDir`.
-2. Note `projectDir` — this is where all student code files live (e.g. `projects/my-quiz-app`). The `.learner/` state folder always stays at the repo root.
-3. Read `.learner/build-map.md` to find the current unchecked item.
-4. Greet them by name. Remind them where they left off in one sentence. Ask if they're ready to continue or if anything came up since last time.
-5. If `.learner/config.json` does not exist, prompt them to run `/start` with their project idea.
+1. Check if `.learner/active.json` exists. If not, prompt them to run `/start` with their project idea and stop.
+2. Read `activeProject` from `.learner/active.json` to get the current project slug (e.g. `"my-quiz-app"`).
+3. Read `.learner/projects/[slug]/config.json` to get their name, current stage, and `projectDir`.
+4. Note `projectDir` — this is where all student code files live (e.g. `projects/my-quiz-app`). State files live in `.learner/projects/[slug]/`.
+5. Read `.learner/projects/[slug]/build-map.md` to find the current unchecked item.
+6. Greet them by name. Remind them where they left off in one sentence. Ask if they're ready to continue or if anything came up since last time.
+7. If they have multiple projects, mention they can use `/switch` to change projects.
 
 ---
 
@@ -135,10 +137,12 @@ Use these consistently so the student builds a mental model:
 ## State File Reference
 
 **File locations:**
-- `.learner/` — always at the repo root. Contains all state files (config, progress, state, build-map, glossary). The extension and hooks read from here.
-- `projectDir` — read from `config.json`. All student code files live here (e.g. `projects/my-quiz-app/index.js`). When writing or reading `.js` files, always use `projectDir` as the base path.
+- `.learner/active.json` — repo root. Points to the active project: `{ "activeProject": "my-quiz-app" }`.
+- `.learner/projects/[slug]/` — per-project state folder. Contains config, progress, state, build-map, glossary for that project.
+- `.learner/pending-answer.json` — repo root. Ephemeral bridge file written by the sidebar, read by the hook.
+- `projectDir` — read from the active project's `config.json`. All student code files live here (e.g. `projects/my-quiz-app/index.js`). When writing or reading `.js` files, always use `projectDir` as the base path.
 
-When awarding XP or updating progress, write to `.learner/state.json`. When marking a Build Map item complete, update `.learner/build-map.md`. When adding a new glossary term, append to `.learner/glossary.md`.
+When awarding XP or updating progress, write to `.learner/projects/[slug]/state.json`. When marking a Build Map item complete, update `.learner/projects/[slug]/build-map.md`. When adding a new glossary term, append to `.learner/projects/[slug]/glossary.md`. Always resolve `[slug]` from `.learner/active.json` first.
 
 **`config.json` fields:**
 ```json
