@@ -27,6 +27,9 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EXTENSION_DIR="$SCRIPT_DIR/extension"
 
+# Create the projects directory (student projects live here, gitignored)
+mkdir -p "$SCRIPT_DIR/projects"
+
 echo "1/3 Installing extension dependencies..."
 cd "$EXTENSION_DIR"
 npm install --silent

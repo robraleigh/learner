@@ -58,6 +58,34 @@ body {
   font-size: 11px;
   color: var(--vscode-descriptionForeground);
 }
+.how-it-works {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+}
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--vscode-foreground);
+}
+.how-num {
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
 
 /* ── Header ── */
 #header {
@@ -186,6 +214,30 @@ body {
   text-align: right;
 }
 
+/* ── Idle hint ── */
+#idle-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  background: var(--vscode-editor-inactiveSelectionBackground);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+#idle-hint code {
+  background: var(--vscode-textCodeBlock-background);
+  color: var(--vscode-textPreformat-foreground);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 11px;
+}
+#idle-hint-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
 /* ── Build Map ── */
 #build-map-section {
   display: flex;
@@ -198,6 +250,11 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--vscode-descriptionForeground);
+}
+#build-map-subtitle {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
 }
 #build-map-progress-label {
   font-size: 11px;

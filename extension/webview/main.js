@@ -46,6 +46,7 @@ const $badgesList = /** @type {HTMLElement} */ (document.getElementById('badges-
 const $streakLabel = /** @type {HTMLElement} */ (document.getElementById('streak-label'));
 const $submitBtn = /** @type {HTMLButtonElement} */ (document.getElementById('submit-btn'));
 const $hintBtn = /** @type {HTMLButtonElement} */ (document.getElementById('hint-btn'));
+const $idleHint = /** @type {HTMLElement} */ (document.getElementById('idle-hint'));
 
 // ── Event listeners ───────────────────────────────────────
 $submitBtn.addEventListener('click', () => {
@@ -116,6 +117,7 @@ function render(state, buildMap, setUp, levelInfo) {
   const review = state.pendingReview;
   if (review && review.active && review.question) {
     $reviewCard.classList.remove('hidden');
+    $idleHint.classList.add('hidden');
     $reviewLevelBadge.textContent = `L${review.questionLevel}`;
     $reviewQuestion.textContent = review.question;
     const hintsLeft = 3 - (review.hintsUsed || 0);
@@ -125,6 +127,7 @@ function render(state, buildMap, setUp, levelInfo) {
     $hintBtn.disabled = hintsLeft <= 0;
   } else {
     $reviewCard.classList.add('hidden');
+    $idleHint.classList.remove('hidden');
     $reviewAnswer.value = '';
   }
 

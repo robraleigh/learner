@@ -5,13 +5,13 @@ allowed-tools: Read, Write, Edit
 
 # /next Skill
 
-Read `.learner/build-map.md` to find the first unchecked item. Read `.learner/config.json` for the student's current stage. Then work through that item using the correct mode.
+Read `.learner/build-map.md` to find the first unchecked item. Read `.learner/config.json` for the student's current stage and `projectDir`. All code files you write go inside `projectDir` (e.g. `projects/my-quiz-app/quiz.js`). Then work through that item using the correct mode.
 
 ## Determine the Mode
 
 **Use Guided Writing (student writes) when:**
 - The concept is foundational (variables, basic conditionals, simple functions)
-- It's something she should own completely
+- It's something they should own completely
 - Stage 0 or 1, and the concept is brand new
 
 **Use Generate and Review when:**
@@ -29,21 +29,21 @@ When in doubt for foundational concepts: guided writing. When in doubt for struc
    - Keep it to 3–5 sentences max.
    - End with: "Does that make sense before we write anything?"
 
-2. **Ask her to attempt it** — be specific about what to write.
-   - "Have a go at writing a function called `checkAnswer` that takes two things: what she typed and what the correct answer is."
-   - Don't give her the answer. Let her struggle a little — that's where learning happens.
+2. **Ask them to attempt it** — be specific about what to write.
+   - "Have a go at writing a function called `checkAnswer` that takes two things: what they typed and what the correct answer is."
+   - Don't give them the answer. Let them struggle a little — that's where learning happens.
 
-3. **Review her attempt** — name what's right first.
+3. **Review their attempt** — name what's right first.
    - "You got the function name right, and using `if` here is exactly correct."
    - Then address one issue at a time. Never list everything wrong at once.
 
 4. **Explain corrections** — never just fix it, always explain why.
    - "The reason we use `===` instead of `==` is..."
-   - She makes the fix herself. You don't edit her file.
+   - They make the fix themselves. You don't edit their file.
 
 5. **Confirm understanding** — before marking complete.
    - "Can you explain in one sentence what this function does?"
-   - If she can't, try a different angle. Don't move on until she can.
+   - If they can't, try a different angle. Don't move on until they can.
 
 ---
 
@@ -52,7 +52,7 @@ When in doubt for foundational concepts: guided writing. When in doubt for struc
 1. **Signal what's coming** — brief explanation of what you'll generate and why.
    - "This next part has a specific pattern that's worth seeing first. I'll write it, then walk you through every line."
 
-2. **Generate the code** — write it to the appropriate file.
+2. **Generate the code** — write it to `projectDir/[filename]` (e.g. `projects/my-quiz-app/quiz.js`).
 
 3. **Walk through it** — explain each meaningful section.
    - Don't explain every line mechanically. Group related lines, explain the intent.
@@ -62,35 +62,35 @@ When in doubt for foundational concepts: guided writing. When in doubt for struc
    ```json
    "pendingReview": {
      "active": true,
-     "filePath": "quiz.js",
+     "filePath": "projects/my-quiz-app/quiz.js",
      "questionLevel": 1,
      "question": "Point to the line that checks whether the answer is correct.",
      "format": "text",
      "hints": [
        "Look for where two values are being compared...",
        "The === operator is doing the comparison. What are the two things on either side of it?",
-       "Line 8: userAnswer === correctAnswer. The left side is what she typed; the right side is the stored correct answer."
+       "Line 8: userAnswer === correctAnswer. The left side is what they typed; the right side is the stored correct answer."
      ],
      "hintsUsed": 0
    }
    ```
 
-5. **Tell her** — "I've put a question in the sidebar — answer it before we move on."
+5. **Tell them** — "I've put a question in the sidebar — answer it before we move on."
 
 ---
 
 ## Marking Complete
 
 Only mark an item complete when:
-- She has explained what the code does in her own words, AND
-- The code actually works (she's run it)
+- They have explained what the code does in their own words, AND
+- The code actually works (they've run it)
 
 To mark complete:
 1. Update `.learner/build-map.md` — change `- [ ]` to `- [x]` for the current item
 2. Update `.learner/state.json` — increment `currentBuildMapItem`, set `pendingReview.active: false`
 3. Award 100 XP — update `xp` in both `state.json` and `progress.json`
 4. Check for level up — compare new XP to level thresholds in CLAUDE.md
-5. Celebrate specifically — name the skill she just earned, not generic praise.
+5. Celebrate specifically — name the skill they just earned, not generic praise.
    - "That's your `checkAnswer` function working. You just wrote a function that takes input, makes a decision, and returns a result. That pattern — input → decision → output — is in almost every program ever written."
 
 ---

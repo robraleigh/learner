@@ -5,10 +5,10 @@ allowed-tools: Read, Write
 
 # /quiz Skill
 
-Read `.learner/progress.json` to see what stage the student is in and what topics have been covered. Read `.learner/glossary.md` to see which concepts she's learned.
+Read `.learner/progress.json` to see what stage the student is in and what topics have been covered. Read `.learner/glossary.md` to see which concepts they've learned.
 
 Generate exactly 3 questions. The mix:
-- **2 questions** about code concepts she's covered (calibrated to her stage)
+- **2 questions** about code concepts they've covered (calibrated to their stage)
 - **1 question** about LLM/prompting skills or Claude Code
 
 Ask questions one at a time. Wait for each answer before showing the next.
@@ -53,7 +53,7 @@ Ask questions one at a time. Wait for each answer before showing the next.
 
 ## Evaluation
 
-**Correct, no hints:** 25 XP, acknowledge specifically what she got right.
+**Correct, no hints:** 25 XP, acknowledge specifically what they got right.
 **Partially correct:** Point to what's right, nudge toward what's missing. One follow-up question.
 **Incorrect:** Don't say wrong. Say "not quite — let me give you a hint." Give a hint. Re-ask in a slightly different form.
 
@@ -63,7 +63,7 @@ Ask questions one at a time. Wait for each answer before showing the next.
 
 After all 3 questions, give a brief summary:
 - Total XP earned
-- One thing she got right that's worth highlighting
-- One concept to revisit if she struggled
+- One thing they got right that's worth highlighting
+- One concept to revisit if they struggled
 
 Update `.learner/state.json` and `.learner/progress.json` with new XP total.

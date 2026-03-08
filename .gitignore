@@ -17,6 +17,9 @@ extension/learner.vsix
 # Claude local settings (API key etc.)
 .claude/settings.local.json
 
+# Student projects — each gets its own git repo inside here
+projects/
+
 # Node
 node_modules/
 

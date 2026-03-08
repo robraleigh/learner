@@ -120,10 +120,17 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
     <div id="not-started" class="hidden">
       <div class="empty-state">
         <div class="empty-icon">🎓</div>
-        <h2>Ready to start?</h2>
+        <h2>Welcome to Learner</h2>
+        <p>Build a real project while Claude teaches you to code — one step at a time.</p>
+        <div class="how-it-works">
+          <div class="how-step"><span class="how-num">1</span><span>Pick a project you actually want to build</span></div>
+          <div class="how-step"><span class="how-num">2</span><span>Claude breaks it into small steps</span></div>
+          <div class="how-step"><span class="how-num">3</span><span>Build each step — Claude explains as you go</span></div>
+          <div class="how-step"><span class="how-num">4</span><span>Answer questions to lock in what you learned</span></div>
+        </div>
         <p>Open the Claude Code chat and type:</p>
         <code>/start "your project idea"</code>
-        <p class="hint">For example: /start "I want to make a quiz app"</p>
+        <p class="hint">Example: /start "I want to build a quiz game"</p>
       </div>
     </div>
 
@@ -146,11 +153,11 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
       <div id="review-card" class="hidden">
         <div id="review-header">
           <span id="review-level-badge"></span>
-          <span>Review</span>
+          <span>Check your understanding</span>
         </div>
         <div id="review-question"></div>
         <div id="review-input-area">
-          <textarea id="review-answer" placeholder="Type your answer here..." rows="3"></textarea>
+          <textarea id="review-answer" placeholder="Type your answer and click Submit, or reply in the chat above..." rows="3"></textarea>
           <div id="review-buttons">
             <button id="hint-btn" class="btn-secondary">Hint</button>
             <button id="submit-btn" class="btn-primary">Submit</button>
@@ -159,9 +166,16 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
         <div id="hints-used-label"></div>
       </div>
 
+      <!-- Idle hint (shown when no review is pending) -->
+      <div id="idle-hint" class="hidden">
+        <span id="idle-hint-icon">💡</span>
+        <span>Type <code>/next</code> in the chat to work on the next step.</span>
+      </div>
+
       <!-- Build Map -->
       <div id="build-map-section">
         <div id="build-map-header">Build Map</div>
+        <div id="build-map-subtitle">Your project roadmap</div>
         <div id="build-map-progress-label"></div>
         <ul id="build-map-list"></ul>
       </div>

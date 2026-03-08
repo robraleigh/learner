@@ -1,17 +1,17 @@
 ---
-description: Trigger a guided code review of the current file. Generates escalating questions (What → How → Why → What-if → Design), tracks answers, awards XP. Use after completing any Build Map item or any time the student wants to check her understanding.
+description: Trigger a guided code review of the current file. Generates escalating questions (What → How → Why → What-if → Design), tracks answers, awards XP. Use after completing any Build Map item or any time the student wants to check their understanding.
 allowed-tools: Read, Write
 ---
 
 # /review Skill
 
-If a filename was provided (e.g. `/review quiz.js`), read that file. Otherwise, read the most recently modified `.js` file in the workspace.
+Read `.learner/config.json` to get `projectDir`. If a filename was provided (e.g. `/review quiz.js`), read `projectDir/quiz.js`. Otherwise, read the most recently modified `.js` file inside `projectDir`.
 
 Read `.learner/progress.json` for the student's stage and review history to calibrate question difficulty.
 
 ## Question Escalation Ladder
 
-Generate 2–4 questions for the review session, starting at Level 1 and only escalating when she answers correctly and confidently.
+Generate 2–4 questions for the review session, starting at Level 1 and only escalating when they answer correctly and confidently.
 
 **Level 1 — What** (always start here)
 Point to something specific in the code.
@@ -44,23 +44,23 @@ Alternative approaches.
 
 ## Running the Review
 
-Ask one question at a time. Wait for her answer before asking the next.
+Ask one question at a time. Wait for their answer before asking the next.
 
-**If she answers correctly:**
-- Acknowledge specifically what she got right ("You correctly spotted that `score` is outside the loop — that's exactly it.")
+**If they answer correctly:**
+- Acknowledge specifically what they got right ("You correctly spotted that `score` is outside the loop — that's exactly it.")
 - Award XP and update `.learner/state.json` and `progress.json`
 - Escalate to the next level if appropriate
 
-**If she's partially right:**
+**If they're partially right:**
 - Acknowledge what's correct first
 - Name the gap without giving the answer
 - Offer a nudge: "Think about what the word `return` does in a function generally."
-- If she's still stuck: tell her to type `/hint` for more help
+- If they're still stuck: tell them to type `/hint` for more help
 
-**If she's wrong:**
+**If they're wrong:**
 - Don't say "wrong" or "incorrect" — say "not quite" or "let's look at this differently"
-- Acknowledge anything that was right in her answer
-- Point her toward `/hint`
+- Acknowledge anything that was right in their answer
+- Point them toward `/hint`
 
 ---
 
@@ -71,7 +71,7 @@ Pre-write three hints for each question when generating the review. Store them i
 ```json
 "pendingReview": {
   "active": true,
-  "filePath": "quiz.js",
+  "filePath": "projects/my-quiz-app/quiz.js",
   "questionLevel": 2,
   "question": "Walk me through what happens when a user types the wrong answer.",
   "format": "text",
@@ -99,7 +99,7 @@ Also log the result to `progress.json.reviewHistory`:
 ```json
 {
   "date": "[today]",
-  "file": "quiz.js",
+  "file": "projects/my-quiz-app/quiz.js",
   "questionsAsked": 3,
   "firstTryCorrect": 2,
   "hintsUsed": 1,
@@ -112,7 +112,7 @@ Also log the result to `progress.json.reviewHistory`:
 ## Wrapping Up
 
 After the final question, give a summary:
-- What she got right on the first try
+- What they got right on the first try
 - One thing to keep in mind going forward
 - Any badge earned (see CLAUDE.md for badge criteria)
 

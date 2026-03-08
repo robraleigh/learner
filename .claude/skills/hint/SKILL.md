@@ -5,12 +5,12 @@ allowed-tools: Read, Write
 
 # /hint Skill
 
-Read `.learner/state.json`. Check `pendingReview.active` — if it's `false`, tell her: "There's no active review question right now. Run `/review` to start one."
+Read `.learner/state.json`. Check `pendingReview.active` — if it's `false`, tell them: "There's no active review question right now. Run `/review` to start one."
 
 If a review is active, check `hintsUsed`:
 
 **0 hints used → deliver Hint 1 (nudge)**
-- Point her thinking in the right direction without giving anything away.
+- Point their thinking in the right direction without giving anything away.
 - Example: "Think about what the word `return` does in a function generally."
 - Increment `hintsUsed` to 1 in `state.json`.
 
@@ -39,4 +39,4 @@ Hints cost XP for the review question:
 - 1–2 hints: 10 XP when answered correctly
 - 3 hints: 5 XP when answered correctly
 
-Do not adjust XP here — that happens when she submits her answer after the hint.
+Do not adjust XP here — that happens when they submit their answer after the hint.

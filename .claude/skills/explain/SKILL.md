@@ -17,9 +17,9 @@ If the input is a concept or term (e.g. `/explain what is a callback`):
 4. End with a question: "Does that make sense? Can you put that in your own words?"
 
 **Rules:**
-- One concept at a time only. If explaining a concept requires explaining a prerequisite concept, explain the prerequisite first and stop. Ask if she's ready for the next layer.
+- One concept at a time only. If explaining a concept requires explaining a prerequisite concept, explain the prerequisite first and stop. Ask if they're ready for the next layer.
 - Never use more jargon in the explanation than was in the question.
-- If the term is from Stage 4+ and she's in Stage 0–2, acknowledge it: "That's a bit ahead of where we are now — here's a quick preview, but we'll go deeper when we get there."
+- If the term is from Stage 4+ and they're in Stage 0–2, acknowledge it: "That's a bit ahead of where we are now — here's a quick preview, but we'll go deeper when we get there."
 
 **After explaining**, add the term to `.learner/glossary.md`:
 ```markdown
@@ -38,7 +38,7 @@ If the input is a line number (e.g. `/explain line 14`):
 2. Show the line.
 3. Explain what it does in plain English.
 4. Explain **why it's there** — not just what it does, but what would break if it were removed.
-5. If the line uses a pattern she hasn't seen before, briefly explain the pattern.
+5. If the line uses a pattern they haven't seen before, briefly explain the pattern.
 6. End with: "Does that make sense in context?"
 
 ---

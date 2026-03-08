@@ -1,5 +1,5 @@
 ---
-description: Show the student's current progress — XP, level, badges, streak, Build Map completion, and a summary of what she now knows.
+description: Show the student's current progress — XP, level, badges, streak, Build Map completion, and a summary of what they now know.
 allowed-tools: Read
 ---
 
@@ -42,7 +42,7 @@ What you know now that you didn't before:
 
 ## "What you know now" Section
 
-Generate this dynamically based on the glossary and covered Build Map items — not a generic list. Be specific to what she actually built.
+Generate this dynamically based on the glossary and covered Build Map items — not a generic list. Be specific to what they actually built.
 
 ## Milestone Messages
 
