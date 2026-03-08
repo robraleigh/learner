@@ -168,6 +168,8 @@ const $submitBtn         = /** @type {HTMLButtonElement} */ (document.getElement
 const $hintBtn           = /** @type {HTMLButtonElement} */ (document.getElementById('hint-btn'));
 const $idleHint          = /** @type {HTMLElement} */ (document.getElementById('idle-hint'));
 const $badgeCatalog      = /** @type {HTMLElement} */ (document.getElementById('badge-catalog'));
+const $panelProjects     = /** @type {HTMLElement} */ (document.getElementById('panel-projects'));
+const $projectList       = /** @type {HTMLElement} */ (document.getElementById('project-list'));
 
 // ── Tab switching ─────────────────────────────────────────
 let activeTab = 'session';
@@ -187,6 +189,7 @@ function switchTab(tab) {
   }
   $panelSession.classList.toggle('hidden', tab !== 'session');
   $panelBadges.classList.toggle('hidden', tab !== 'badges');
+  $panelProjects.classList.toggle('hidden', tab !== 'projects');
 }
 
 // ── Event listeners ───────────────────────────────────────
@@ -217,7 +220,7 @@ $reviewAnswer.addEventListener('keydown', (e) => {
 window.addEventListener('message', (event) => {
   const message = event.data;
   if (message.type === 'stateUpdate') {
-    render(message.state, message.buildMap, message.setUp, message.levelInfo, message.currentInstruction);
+    render(message.state, message.buildMap, message.setUp, message.levelInfo, message.currentInstruction, message.projects || []);
   }
 });
 
@@ -228,8 +231,9 @@ window.addEventListener('message', (event) => {
  * @param {boolean} setUp
  * @param {{ level: number, title: string, nextLevelXP: number }} levelInfo
  * @param {{ type: string, text: string, subtext: string }|null} currentInstruction
+ * @param {Array} projects
  */
-function render(state, buildMap, setUp, levelInfo, currentInstruction) {
+function render(state, buildMap, setUp, levelInfo, currentInstruction, projects) {
   if (!setUp || !state) {
     $notStarted.classList.remove('hidden');
     $mainContent.classList.add('hidden');
@@ -318,6 +322,9 @@ function render(state, buildMap, setUp, levelInfo, currentInstruction) {
 
   // Badge catalog (badges panel)
   renderBadgeCatalog(state);
+
+  // Projects panel
+  renderProjects(projects);
 
   // Streak
   const streak = state.streak || 0;
@@ -496,6 +503,122 @@ function renderBadgeCatalog(state) {
 
     section.appendChild(grid);
     $badgeCatalog.appendChild(section);
+  }
+}
+
+// ── Projects panel ────────────────────────────────────────
+const PROJECT_TYPE_LABELS = { cli: 'CLI', web: 'Web', mobile: 'Mobile' };
+const STACK_LABELS = {
+  'node': 'Node.js',
+  'html-css-js': 'HTML/CSS/JS',
+  'vite-vanilla': 'Vite',
+  'vite-react': 'React',
+  'expo': 'Expo',
+};
+
+function renderProjects(projects) {
+  $projectList.innerHTML = '';
+
+  if (!projects || projects.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'projects-empty';
+    empty.textContent = 'No projects yet. Type /start in the chat to create one.';
+    $projectList.appendChild(empty);
+    return;
+  }
+
+  for (const project of projects) {
+    const card = document.createElement('div');
+    card.className = `project-card${project.isActive ? ' project-card--active' : ''}`;
+
+    // Title row
+    const titleRow = document.createElement('div');
+    titleRow.className = 'project-card-title-row';
+
+    const name = document.createElement('span');
+    name.className = 'project-card-name';
+    name.textContent = project.projectName;
+
+    titleRow.appendChild(name);
+
+    if (project.isActive) {
+      const activePill = document.createElement('span');
+      activePill.className = 'project-card-active-pill';
+      activePill.textContent = 'Active';
+      titleRow.appendChild(activePill);
+    }
+
+    card.appendChild(titleRow);
+
+    // Meta row: type + stack + last session
+    const meta = document.createElement('div');
+    meta.className = 'project-card-meta';
+
+    const typePill = document.createElement('span');
+    typePill.className = `project-type-pill project-type-pill--${project.projectType}`;
+    typePill.textContent = PROJECT_TYPE_LABELS[project.projectType] || project.projectType;
+    meta.appendChild(typePill);
+
+    if (project.stack && STACK_LABELS[project.stack]) {
+      const stackSpan = document.createElement('span');
+      stackSpan.className = 'project-card-stack';
+      stackSpan.textContent = STACK_LABELS[project.stack];
+      meta.appendChild(stackSpan);
+    }
+
+    if (project.lastSession) {
+      const dateSpan = document.createElement('span');
+      dateSpan.className = 'project-card-date';
+      dateSpan.textContent = formatDate(project.lastSession);
+      meta.appendChild(dateSpan);
+    }
+
+    card.appendChild(meta);
+
+    // Progress bar
+    if (project.itemsTotal > 0) {
+      const progressWrap = document.createElement('div');
+      progressWrap.className = 'project-progress-wrap';
+
+      const bar = document.createElement('div');
+      bar.className = 'project-progress-bar';
+      const pct = Math.round((project.itemsComplete / project.itemsTotal) * 100);
+      bar.style.width = `${pct}%`;
+      progressWrap.appendChild(bar);
+
+      const label = document.createElement('span');
+      label.className = 'project-progress-label';
+      label.textContent = project.itemsComplete === project.itemsTotal
+        ? `${project.itemsTotal}/${project.itemsTotal} — complete ✓`
+        : `${project.itemsComplete} / ${project.itemsTotal} items`;
+      progressWrap.appendChild(label);
+
+      card.appendChild(progressWrap);
+    }
+
+    // Switch button (only for non-active projects)
+    if (!project.isActive) {
+      const switchBtn = document.createElement('button');
+      switchBtn.className = 'project-switch-btn';
+      switchBtn.textContent = 'Switch to this project';
+      switchBtn.addEventListener('click', () => {
+        vscode.postMessage({ type: 'switchProject', slug: project.slug });
+        switchTab('session');
+      });
+      card.appendChild(switchBtn);
+    }
+
+    $projectList.appendChild(card);
+  }
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) { return ''; }
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return dateStr;
   }
 }
 

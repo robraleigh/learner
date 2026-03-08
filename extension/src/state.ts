@@ -185,3 +185,91 @@ export function isSetUp(workspaceRoot: string): boolean {
   }
   return fs.existsSync(path.join(dir, 'config.json'));
 }
+
+export interface ProjectSummary {
+  slug: string;
+  projectName: string;
+  projectType: string;
+  stack: string;
+  lastSession: string;
+  itemsComplete: number;
+  itemsTotal: number;
+  isActive: boolean;
+}
+
+/** Reads all projects for the active student and returns summaries. */
+export function readAllProjects(workspaceRoot: string): ProjectSummary[] {
+  const { activeStudent, activeProject } = getActiveIds(workspaceRoot);
+  if (!activeStudent) {
+    return [];
+  }
+
+  const projectsDir = path.join(workspaceRoot, '.learner', 'students', activeStudent, 'projects');
+  let slugs: string[] = [];
+  try {
+    slugs = fs.readdirSync(projectsDir).filter((name) => {
+      try {
+        return fs.statSync(path.join(projectsDir, name)).isDirectory();
+      } catch {
+        return false;
+      }
+    });
+  } catch {
+    return [];
+  }
+
+  const results: ProjectSummary[] = [];
+  for (const slug of slugs) {
+    const dir = path.join(projectsDir, slug);
+    const configPath = path.join(dir, 'config.json');
+    if (!fs.existsSync(configPath)) {
+      continue;
+    }
+
+    let config: Record<string, any> = {};
+    try {
+      config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    } catch {
+      continue;
+    }
+
+    // Count build map items
+    let itemsComplete = 0;
+    let itemsTotal = 0;
+    try {
+      const raw = fs.readFileSync(path.join(dir, 'build-map.md'), 'utf-8');
+      for (const line of raw.split('\n')) {
+        if (/^- \[x\] \d+\./i.test(line)) { itemsComplete++; itemsTotal++; }
+        else if (/^- \[ \] \d+\./.test(line)) { itemsTotal++; }
+      }
+    } catch { /* no build map yet */ }
+
+    results.push({
+      slug,
+      projectName: config.projectName || slug,
+      projectType: config.projectType || 'cli',
+      stack: config.stack || '',
+      lastSession: config.lastSession || config.startDate || '',
+      itemsComplete,
+      itemsTotal,
+      isActive: slug === activeProject,
+    });
+  }
+
+  // Active project first, then alphabetical
+  results.sort((a, b) => {
+    if (a.isActive) { return -1; }
+    if (b.isActive) { return 1; }
+    return a.projectName.localeCompare(b.projectName);
+  });
+
+  return results;
+}
+
+/** Writes .learner/active.json to switch the active project. */
+export function switchActiveProject(workspaceRoot: string, slug: string): void {
+  const { activeStudent } = getActiveIds(workspaceRoot);
+  if (!activeStudent) { return; }
+  const activePath = path.join(workspaceRoot, '.learner', 'active.json');
+  fs.writeFileSync(activePath, JSON.stringify({ activeStudent, activeProject: slug }, null, 2), 'utf-8');
+}

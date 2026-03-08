@@ -10,6 +10,8 @@ import {
   parseBuildMap,
   isSetUp,
   getLevelForXP,
+  readAllProjects,
+  switchActiveProject,
 } from './state';
 
 export class LearnerViewProvider implements vscode.WebviewViewProvider {
@@ -64,6 +66,14 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
           vscode.window.showInformationMessage('Type /hint in the Claude Code chat for a hint.');
           break;
         }
+        case 'switchProject': {
+          const { slug } = message;
+          if (slug) {
+            switchActiveProject(this._workspaceRoot, slug);
+            this.refresh();
+          }
+          break;
+        }
         case 'ready': {
           // Webview is ready, send initial state
           this.refresh();
@@ -84,6 +94,7 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
     const state = readState(this._workspaceRoot);
     const buildMap = parseBuildMap(this._workspaceRoot);
     const setUp = isSetUp(this._workspaceRoot);
+    const projects = readAllProjects(this._workspaceRoot);
 
     let levelInfo = { level: 1, title: 'Debug Mode', nextLevelXP: 200 };
     if (state) {
@@ -97,6 +108,7 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
       setUp,
       levelInfo,
       currentInstruction: state?.currentInstruction ?? null,
+      projects,
     });
   }
 
@@ -155,6 +167,7 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
       <div id="tab-nav">
         <button class="tab-btn active" data-tab="session">Session</button>
         <button class="tab-btn" data-tab="badges">Badges</button>
+        <button class="tab-btn" data-tab="projects">Projects</button>
       </div>
 
       <!-- Session panel -->
@@ -220,6 +233,11 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
       <!-- Badges panel (full catalog) -->
       <div id="panel-badges" class="hidden">
         <div id="badge-catalog"></div>
+      </div>
+
+      <!-- Projects panel -->
+      <div id="panel-projects" class="hidden">
+        <div id="project-list"></div>
       </div>
     </div>
   </div>
