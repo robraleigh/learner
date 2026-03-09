@@ -4,11 +4,14 @@ import * as fs from 'fs';
 import {
   LearnerState,
   BuildMapItem,
+  CurrentInstruction,
   readState,
   writePendingAnswer,
   parseBuildMap,
   isSetUp,
   getLevelForXP,
+  readAllProjects,
+  switchActiveProject,
 } from './state';
 
 export class LearnerViewProvider implements vscode.WebviewViewProvider {
@@ -63,6 +66,14 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
           vscode.window.showInformationMessage('Type /hint in the Claude Code chat for a hint.');
           break;
         }
+        case 'switchProject': {
+          const { slug } = message;
+          if (slug) {
+            switchActiveProject(this._workspaceRoot, slug);
+            this.refresh();
+          }
+          break;
+        }
         case 'ready': {
           // Webview is ready, send initial state
           this.refresh();
@@ -83,6 +94,7 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
     const state = readState(this._workspaceRoot);
     const buildMap = parseBuildMap(this._workspaceRoot);
     const setUp = isSetUp(this._workspaceRoot);
+    const projects = readAllProjects(this._workspaceRoot);
 
     let levelInfo = { level: 1, title: 'Debug Mode', nextLevelXP: 200 };
     if (state) {
@@ -95,6 +107,8 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
       buildMap,
       setUp,
       levelInfo,
+      currentInstruction: state?.currentInstruction ?? null,
+      projects,
     });
   }
 
@@ -135,13 +149,13 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
     </div>
 
     <div id="main-content" class="hidden">
-      <!-- Header: name + level -->
+      <!-- Header: name + level (always visible) -->
       <div id="header">
         <div id="student-name"></div>
         <div id="level-badge"></div>
       </div>
 
-      <!-- XP Bar -->
+      <!-- XP Bar (always visible) -->
       <div id="xp-section">
         <div id="xp-bar-container">
           <div id="xp-bar"></div>
@@ -149,47 +163,83 @@ export class LearnerViewProvider implements vscode.WebviewViewProvider {
         <div id="xp-label"></div>
       </div>
 
-      <!-- Review Card (shown when a review is pending) -->
-      <div id="review-card" class="hidden">
-        <div id="review-header">
-          <span id="review-level-badge"></span>
-          <span>Check your understanding</span>
-        </div>
-        <div id="review-question"></div>
-        <div id="review-input-area">
-          <textarea id="review-answer" placeholder="Type your answer and click Submit, or reply in the chat above..." rows="3"></textarea>
-          <div id="review-buttons">
-            <button id="hint-btn" class="btn-secondary">Hint</button>
-            <button id="submit-btn" class="btn-primary">Submit</button>
+      <!-- Tab nav -->
+      <div id="tab-nav">
+        <button class="tab-btn active" data-tab="session">Session</button>
+        <button class="tab-btn" data-tab="badges">Badges</button>
+        <button class="tab-btn" data-tab="projects">Projects</button>
+      </div>
+
+      <!-- Session panel -->
+      <div id="panel-session">
+
+        <!-- Instruction Card -->
+        <div id="instruction-card" class="hidden">
+          <div id="instruction-header">
+            <span id="instruction-type-badge"></span>
+            <span id="instruction-header-label"></span>
           </div>
+          <div id="instruction-text"></div>
+          <div id="instruction-subtext" class="hidden"></div>
         </div>
-        <div id="hints-used-label"></div>
+
+        <!-- Review Card (replaces instruction zone when a review is active) -->
+        <div id="review-card" class="hidden">
+          <div id="review-header">
+            <span id="review-level-badge"></span>
+            <span>Check your understanding</span>
+          </div>
+          <div id="review-question"></div>
+          <div id="review-input-area">
+            <textarea id="review-answer" placeholder="Type your answer here..." rows="3"></textarea>
+            <div id="review-buttons">
+              <button id="hint-btn" class="btn-secondary">Hint</button>
+              <button id="submit-btn" class="btn-primary">Submit</button>
+            </div>
+          </div>
+          <div id="hints-used-label"></div>
+        </div>
+
+        <!-- Idle hint (shown when no instruction and no review) -->
+        <div id="idle-hint" class="hidden">
+          <span id="idle-hint-icon">💡</span>
+          <span>Type <code>/next</code> in the chat to work on the next step.</span>
+        </div>
+
+        <!-- Build Map (compact, secondary) -->
+        <div id="build-map-section">
+          <div id="build-map-header">
+            <span>Build Map</span>
+            <span id="build-map-progress-label"></span>
+          </div>
+          <ul id="build-map-list"></ul>
+        </div>
+
+        <!-- Badge summary (earned + in-progress chips) -->
+        <div id="badges-section" class="hidden">
+          <div id="badges-header">
+            <span>Badges</span>
+            <span id="badges-tab-link" class="section-link">See all →</span>
+          </div>
+          <div id="badges-list"></div>
+          <div id="badges-in-progress"></div>
+        </div>
+
+        <!-- Streak -->
+        <div id="streak-section">
+          <span id="streak-icon">🔥</span>
+          <span id="streak-label"></span>
+        </div>
       </div>
 
-      <!-- Idle hint (shown when no review is pending) -->
-      <div id="idle-hint" class="hidden">
-        <span id="idle-hint-icon">💡</span>
-        <span>Type <code>/next</code> in the chat to work on the next step.</span>
+      <!-- Badges panel (full catalog) -->
+      <div id="panel-badges" class="hidden">
+        <div id="badge-catalog"></div>
       </div>
 
-      <!-- Build Map -->
-      <div id="build-map-section">
-        <div id="build-map-header">Build Map</div>
-        <div id="build-map-subtitle">Your project roadmap</div>
-        <div id="build-map-progress-label"></div>
-        <ul id="build-map-list"></ul>
-      </div>
-
-      <!-- Badges -->
-      <div id="badges-section" class="hidden">
-        <div id="badges-header">Badges</div>
-        <div id="badges-list"></div>
-      </div>
-
-      <!-- Streak -->
-      <div id="streak-section">
-        <span id="streak-icon">🔥</span>
-        <span id="streak-label"></span>
+      <!-- Projects panel -->
+      <div id="panel-projects" class="hidden">
+        <div id="project-list"></div>
       </div>
     </div>
   </div>

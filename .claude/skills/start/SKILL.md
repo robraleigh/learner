@@ -4,7 +4,7 @@ description: Start a new learning project. Runs a skill assessment, collaborativ
 
 # /start Skill
 
-The student has provided a project idea. Your job is to assess their level, decompose the idea into a Build Map, and get everything set up so they can start building.
+The student has provided a project idea. Your job is to assess their level, pick the right stack, decompose the idea into a Build Map, and get everything set up so they can start building.
 
 ## Step 1 — Skill Assessment (conversational, not a test)
 
@@ -18,6 +18,23 @@ Based on their answers, assign a starting stage:
 - No coding experience at all → Stage 0
 - Heard of variables, maybe done a tiny bit → Stage 1
 - Written some code, understands basic concepts → Stage 2
+
+## Step 1.5 — Badge gap check (returning students only)
+
+If `profile.json` already exists, read `profile.json.badges`, `profile.json.badgeProgress`, and `profile.json.overallStage` before building the map.
+
+Identify unearned badges where `minStage ≤ overallStage` — these are gaps within reach. Group them by track. Use this to inform (not dictate) the Build Map:
+
+- If the student has no CSS badges and is at Stage 2+, lean toward a web project that naturally involves CSS.
+- If Functions or Objects badges are missing, include Build Map items that require writing functions or objects from scratch.
+- If Data & Storage badges are missing and they're at Stage 4+, suggest a project that involves reading or writing data.
+- If DevOps/Deployment badges are untouched and they're at Stage 4+, include a milestone for npm scripts or environment variables.
+
+Do not tell the student "you need to earn badges" — just shape the project scope around what they haven't practised yet. When presenting the Build Map, you can say:
+
+> "I've shaped this around things you haven't tackled yet — there are some gaps in your Functions and Debugging skills that this project will naturally fill in."
+
+---
 
 ## Step 2 — Build Map
 
@@ -39,6 +56,28 @@ Build Map: Football Quiz
 [ ] 5. Show the final score at the end with a message
 [ ] 6. Let the player pick a quiz category at the start
 ```
+
+## Step 2.5 — Stack Selection
+
+Before creating any files, determine the project type and choose the right stack.
+
+Ask: "Is this mainly something you'd use in a browser, on a phone, or just in the terminal?"
+
+Then choose based on their answer and their stage:
+
+| Project type | Stage | Stack |
+|---|---|---|
+| CLI (terminal tool, text game, script) | Any | Node.js only |
+| Web (app, dashboard, quiz UI, website) | 0–1 | Plain HTML/CSS/JS |
+| Web | 2–3 | Vite + vanilla JS |
+| Web | 4+ | React + Vite |
+| Mobile ("I want it on my phone") | Any | React Native + Expo |
+
+Tell them what you're choosing and why, briefly:
+- "Since this is a web app and you're newer to coding, we'll start with plain HTML and JavaScript — no extra tools yet. Once you've got the basics, we can add a proper dev setup."
+- "Since you want this on your phone, we'll use React Native and Expo — it lets you see changes instantly on a simulator."
+
+If it's a web or mobile project, also ask: "Do you have a rough idea what you want it to look like? A sketch or screenshot of something similar would help a lot — it makes it much easier to write CSS that actually looks right."
 
 ## Step 3 — Create the Project Directory
 
@@ -66,21 +105,25 @@ Before creating state files, set up the project folder.
 
 Once the project directory exists and `git init` is done, create these files.
 
-All state files go in `.learner/projects/[slug]/` — one folder per project, so multiple projects can coexist without overwriting each other.
+All project state files go in `.learner/students/[name]/projects/[slug]/` — one folder per project, so multiple projects can coexist without overwriting each other.
 
-**.learner/projects/[slug]/config.json**
+Also read `.learner/active.json` to get `activeStudent`. Use that name throughout.
+
+**.learner/students/[name]/projects/[slug]/config.json**
 ```json
 {
   "studentName": "[their name, or 'you' if they didn't share it]",
   "stage": [0, 1, or 2],
   "language": "javascript",
+  "projectType": "[cli | web | mobile]",
+  "stack": "[node | html-css-js | vite-vanilla | vite-react | expo]",
   "projectName": "[their project name]",
   "projectDir": "projects/[slug]",
   "startDate": "[today's date]"
 }
 ```
 
-**.learner/projects/[slug]/build-map.md**
+**.learner/students/[name]/projects/[slug]/build-map.md**
 ```markdown
 # Build Map: [Project Name]
 
@@ -89,7 +132,7 @@ All state files go in `.learner/projects/[slug]/` — one folder per project, so
 ...
 ```
 
-**.learner/projects/[slug]/progress.json**
+**.learner/students/[name]/projects/[slug]/progress.json**
 ```json
 {
   "xp": 0,
@@ -102,12 +145,13 @@ All state files go in `.learner/projects/[slug]/` — one folder per project, so
 }
 ```
 
-**.learner/projects/[slug]/state.json**
+**.learner/students/[name]/projects/[slug]/state.json**
 ```json
 {
   "studentName": "[their name]",
   "currentStage": [stage],
   "currentBuildMapItem": 1,
+  "currentInstruction": null,
   "pendingReview": {
     "active": false,
     "filePath": "",
@@ -121,12 +165,13 @@ All state files go in `.learner/projects/[slug]/` — one folder per project, so
   "level": 1,
   "levelTitle": "Debug Mode",
   "badges": [],
+  "badgeProgress": {},
   "streak": 1,
   "lastSession": "[today's date]"
 }
 ```
 
-**.learner/projects/[slug]/glossary.md**
+**.learner/students/[name]/projects/[slug]/glossary.md**
 ```markdown
 # My Coding Glossary
 
@@ -135,12 +180,45 @@ Terms I've learned, in plain English.
 ---
 ```
 
-After creating the project state files, update (or create) **.learner/active.json** to point to this project:
+**Student profile** — check if `.learner/students/[name]/profile.json` already exists.
+- If it does NOT exist (first project for this student), create it:
 ```json
-{ "activeProject": "[slug]" }
+{
+  "studentName": "[their name]",
+  "overallStage": [stage],
+  "startDate": "[today's date]",
+  "lastSession": "[today's date]",
+  "activeProject": "[slug]",
+  "projectsCompleted": [],
+  "conceptsLearned": [],
+  "weakAreas": [],
+  "strengths": [],
+  "totalXP": 0,
+  "level": 1,
+  "levelTitle": "Debug Mode",
+  "badges": []
+}
+```
+- If it already exists (returning student), update `activeProject` to `[slug]` and `lastSession` to today.
+
+Also create `.learner/students/[name]/notes.md` if it doesn't exist:
+```markdown
+# Teaching Notes: [name]
+
+## What clicks
+
+## Areas to reinforce
+
+## Per-project
+
 ```
 
-This tells the sidebar and hooks which project is currently active. If the student already has other projects, tell them: "I've set [Project Name] as your active project. You can switch back to another one anytime with `/switch`."
+After creating the project state files, update (or create) **.learner/active.json**:
+```json
+{ "activeStudent": "[name]", "activeProject": "[slug]" }
+```
+
+This tells the sidebar and hooks which student and project is currently active.
 
 ---
 
@@ -149,7 +227,7 @@ This tells the sidebar and hooks which project is currently active. If the stude
 After the files are created, say something like:
 "Everything's set up. The sidebar should show your Build Map now. Your project folder is at `projects/[slug]/` — that's where all your code will live. Let's start with item 1."
 
-Then begin Item 1 using the teach-first protocol from CLAUDE.md — explain the concept before asking them to write anything.
+Explain the folder structure:
+"There are two places that matter. The `.learner/` folder holds your progress — XP, Build Map, notes. Your actual code goes in `projects/[slug]/`. That code folder is its own git repository, which means when you're done, you can put it on GitHub as your own project. Those files are yours."
 
-Also take a moment to explain the folder structure:
-"There are two folders that matter here. The `.learner/` folder holds your progress — XP, Build Map, glossary. Your actual code goes in `projects/[slug]/`. That code folder is its own git repository, which means when you're done, you can put it on GitHub as your own project. Those files are yours."
+Then begin Item 1 using the teach-first protocol from CLAUDE.md — explain the concept before asking them to write anything.

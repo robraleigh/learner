@@ -1,13 +1,16 @@
 ---
 description: Trigger a guided code review of the current file. Generates escalating questions (What → How → Why → What-if → Design), tracks answers, awards XP. Use after completing any Build Map item or any time the student wants to check their understanding.
-allowed-tools: Read, Write
 ---
 
 # /review Skill
 
-Read `.learner/config.json` to get `projectDir`. If a filename was provided (e.g. `/review quiz.js`), read `projectDir/quiz.js`. Otherwise, read the most recently modified `.js` file inside `projectDir`.
+Read `.learner/active.json` to get `activeStudent` and `activeProject`. Then read:
+- `.learner/students/[activeStudent]/projects/[activeProject]/config.json` → get `projectDir`
+- `.learner/students/[activeStudent]/projects/[activeProject]/progress.json` → get stage and review history
 
-Read `.learner/progress.json` for the student's stage and review history to calibrate question difficulty.
+If a filename was provided (e.g. `/review quiz.js`), read `projectDir/quiz.js`. Otherwise, read the most recently modified code file inside `projectDir`.
+
+Calibrate question difficulty based on the student's stage and review history.
 
 ## Question Escalation Ladder
 
@@ -48,7 +51,7 @@ Ask one question at a time. Wait for their answer before asking the next.
 
 **If they answer correctly:**
 - Acknowledge specifically what they got right ("You correctly spotted that `score` is outside the loop — that's exactly it.")
-- Award XP and update `.learner/state.json` and `progress.json`
+- Award XP and update `state.json` and `progress.json`
 - Escalate to the next level if appropriate
 
 **If they're partially right:**
@@ -88,14 +91,16 @@ Pre-write three hints for each question when generating the review. Store them i
 
 ## XP Awards
 
-Update both `.learner/state.json` and `.learner/progress.json`:
+Update both `state.json` and `progress.json` (both at the project path):
 
 - Level 1 question answered correctly, no hints: 25 XP
 - Level 2+ question answered correctly, no hints: 25 XP
 - Answered correctly with 1–2 hints: 10 XP
 - Answered correctly with 3 hints (full reveal): 5 XP
 
-Also log the result to `progress.json.reviewHistory`:
+Also update `profile.json` (`.learner/students/[activeStudent]/profile.json`) with the new total XP.
+
+Log the result to `progress.json.reviewHistory`:
 ```json
 {
   "date": "[today]",
@@ -115,5 +120,9 @@ After the final question, give a summary:
 - What they got right on the first try
 - One thing to keep in mind going forward
 - Any badge earned (see CLAUDE.md for badge criteria)
+
+If they struggled on a concept (needed 2+ hints), add it to `profile.json.weakAreas` so future sessions can reinforce it. If they got it first try consistently, consider adding it to `profile.json.strengths`.
+
+Append a brief note to `.learner/students/[activeStudent]/notes.md` if anything notable happened during the review (e.g. "Understood closures immediately on first try" or "Needed all three hints for the loop concept — worth revisiting").
 
 Then suggest the next action: "Ready to move to the next item? Type `/next`."

@@ -6,13 +6,17 @@ description: Switch to a different project and pick up where you left off. Lists
 
 The student wants to switch to a different project (or see what projects they have).
 
-## Step 1 — Discover Projects
+## Step 1 — Identify the Student
 
-Read all subdirectories under `.learner/projects/`. For each one that contains a `config.json`, read:
+Read `.learner/active.json` to get `activeStudent`. All projects for this student live at `.learner/students/[activeStudent]/projects/`.
+
+## Step 2 — Discover Projects
+
+Read all subdirectories under `.learner/students/[activeStudent]/projects/`. For each one that contains a `config.json`, read:
 - `config.json` → `projectName`, `lastSession`, `projectDir`
 - `build-map.md` → count `[x]` (complete) and `[ ]` (incomplete) items to get progress
 
-## Step 2 — Display Project List
+## Step 3 — Display Project List
 
 Show a numbered list like this:
 
@@ -29,22 +33,23 @@ If only one project exists, say:
 "You only have one project right now — [Project Name]. You're already on it! Use `/start` if you want to begin a new one."
 And stop.
 
-If `.learner/projects/` doesn't exist or is empty, say:
+If the projects directory doesn't exist or is empty, say:
 "You don't have any projects yet. Use `/start` to create one."
 And stop.
 
-## Step 3 — Switch
+## Step 4 — Switch
 
 Once the student picks a project (by number or name):
 
-1. Note the slug for that project (the directory name under `.learner/projects/`).
+1. Note the slug for that project (the directory name under `projects/`).
 2. Write `.learner/active.json`:
    ```json
-   { "activeProject": "[slug]" }
+   { "activeStudent": "[activeStudent]", "activeProject": "[slug]" }
    ```
-3. Read the project's `config.json` and `build-map.md`.
-4. Find the first unchecked Build Map item.
-5. Greet them:
+3. Update `.learner/students/[activeStudent]/profile.json` — set `activeProject` to the new slug.
+4. Read the project's `config.json` and `build-map.md`.
+5. Find the first unchecked Build Map item.
+6. Greet them:
    "Switched to [Project Name]. You're on item [N]: [item text]. Ready to pick up where you left off?"
 
 The sidebar will update automatically when `active.json` changes.

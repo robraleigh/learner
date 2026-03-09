@@ -19,9 +19,9 @@ export function activate(context: vscode.ExtensionContext) {
     activeWatcher.onDidCreate(() => provider.refresh());
     context.subscriptions.push(activeWatcher);
 
-    // Watch all per-project state files — catches state.json and build-map.md changes for any project
+    // Watch all per-student/per-project state files — catches state.json and build-map.md changes
     const projectsWatcher = vscode.workspace.createFileSystemWatcher(
-      new vscode.RelativePattern(workspaceRoot, '.learner/projects/**')
+      new vscode.RelativePattern(workspaceRoot, '.learner/students/**')
     );
     projectsWatcher.onDidChange(() => provider.refresh());
     projectsWatcher.onDidCreate(() => provider.refresh());

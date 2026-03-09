@@ -130,6 +130,50 @@ body {
   text-align: right;
 }
 
+/* ── Instruction Card ── */
+#instruction-card {
+  background: var(--vscode-editor-inactiveSelectionBackground);
+  border: 1px solid var(--vscode-charts-blue);
+  border-left: 4px solid var(--vscode-charts-blue);
+  border-radius: 6px;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#instruction-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--vscode-descriptionForeground);
+}
+#instruction-type-badge {
+  background: var(--vscode-charts-blue);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+#instruction-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--vscode-foreground);
+  font-weight: 600;
+}
+#instruction-subtext {
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.4;
+  border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
+  padding-top: 8px;
+}
 /* ── Review Card ── */
 #review-card {
   background: var(--vscode-editor-inactiveSelectionBackground);
@@ -245,19 +289,20 @@ body {
   gap: 6px;
 }
 #build-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--vscode-descriptionForeground);
 }
-#build-map-subtitle {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-  font-style: italic;
-}
 #build-map-progress-label {
   font-size: 11px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--vscode-descriptionForeground);
 }
 #build-map-list {
@@ -300,18 +345,80 @@ body {
   min-width: 14px;
 }
 
-/* ── Badges ── */
+/* ── Tab nav ── */
+#tab-nav {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  padding-bottom: 0;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: var(--vscode-font-family);
+  color: var(--vscode-descriptionForeground);
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+.tab-btn:hover {
+  color: var(--vscode-foreground);
+}
+.tab-btn.active {
+  color: var(--vscode-foreground);
+  border-bottom-color: var(--vscode-focusBorder);
+  font-weight: 600;
+}
+
+/* ── Badge tier colours ── */
+/* Bronze */
+.badge--bronze {
+  background: rgba(205, 127, 50, 0.15);
+  color: #e8a85c;
+  border: 1px solid rgba(205, 127, 50, 0.35);
+}
+/* Silver */
+.badge--silver {
+  background: rgba(168, 184, 200, 0.15);
+  color: #a8c0d0;
+  border: 1px solid rgba(168, 184, 200, 0.35);
+}
+/* Gold */
+.badge--gold {
+  background: rgba(240, 180, 41, 0.15);
+  color: #f0c040;
+  border: 1px solid rgba(240, 180, 41, 0.35);
+}
+
+/* ── Badges (session panel summary) ── */
 #badges-section {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 #badges-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--vscode-descriptionForeground);
+}
+.section-link {
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--vscode-textLink-foreground);
+  cursor: pointer;
+  text-decoration: none;
+}
+.section-link:hover {
+  text-decoration: underline;
 }
 #badges-list {
   display: flex;
@@ -320,11 +427,267 @@ body {
 }
 .badge {
   font-size: 11px;
-  background: var(--vscode-badge-background);
-  color: var(--vscode-badge-foreground);
   padding: 3px 8px;
   border-radius: 10px;
   cursor: default;
+}
+
+/* In-progress badge rows (session panel) */
+#badges-in-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 2px;
+}
+.badge-progress-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.badge-progress-label {
+  color: var(--vscode-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.badge-progress-bar-wrap {
+  width: 48px;
+  height: 4px;
+  background: var(--vscode-scrollbarSlider-background);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.badge-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.badge-progress-bar--bronze { background: #cd7f32; }
+.badge-progress-bar--silver { background: #a8c0d0; }
+.badge-progress-bar--gold   { background: #f0c040; }
+.badge-progress-count {
+  color: var(--vscode-descriptionForeground);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* ── Badge catalog (badges panel) ── */
+#panel-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.catalog-summary {
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  padding: 6px 0 10px;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  margin-bottom: 10px;
+}
+.catalog-track {
+  margin-bottom: 14px;
+}
+.catalog-track-header {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--vscode-descriptionForeground);
+  margin-bottom: 6px;
+}
+.catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.catalog-badge {
+  border-radius: 6px;
+  padding: 8px 8px 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: default;
+  border: 1px solid transparent;
+}
+/* Earned */
+.catalog-badge--earned {
+  position: relative;
+}
+.catalog-badge--earned.catalog-badge--bronze {
+  background: rgba(205, 127, 50, 0.15);
+  border-color: rgba(205, 127, 50, 0.4);
+}
+.catalog-badge--earned.catalog-badge--silver {
+  background: rgba(168, 184, 200, 0.15);
+  border-color: rgba(168, 184, 200, 0.4);
+}
+.catalog-badge--earned.catalog-badge--gold {
+  background: rgba(240, 180, 41, 0.18);
+  border-color: rgba(240, 180, 41, 0.45);
+}
+/* Available (in-reach, not earned) */
+.catalog-badge--available {
+  background: var(--vscode-editor-inactiveSelectionBackground);
+}
+.catalog-badge--available.catalog-badge--bronze { border-color: rgba(205, 127, 50, 0.2); }
+.catalog-badge--available.catalog-badge--silver { border-color: rgba(168, 184, 200, 0.2); }
+.catalog-badge--available.catalog-badge--gold   { border-color: rgba(240, 180, 41, 0.2); }
+/* Locked */
+.catalog-badge--locked {
+  background: transparent;
+  border-color: var(--vscode-sideBarSectionHeader-border);
+  opacity: 0.45;
+}
+.catalog-badge-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.catalog-badge-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  line-height: 1.3;
+}
+.catalog-badge--locked .catalog-badge-name {
+  color: var(--vscode-descriptionForeground);
+}
+.catalog-badge-earned-mark {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--vscode-charts-green);
+}
+.catalog-badge-lock-label {
+  font-size: 10px;
+  color: var(--vscode-descriptionForeground);
+}
+.catalog-badge-bar-wrap {
+  height: 3px;
+  background: var(--vscode-scrollbarSlider-background);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+.catalog-badge-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.catalog-badge-bar--bronze { background: #cd7f32; }
+.catalog-badge-bar--silver { background: #a8c0d0; }
+.catalog-badge-bar--gold   { background: #f0c040; }
+.catalog-badge-count {
+  font-size: 10px;
+  color: var(--vscode-descriptionForeground);
+}
+
+/* ── Projects panel ── */
+#panel-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.projects-empty {
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  padding: 12px 0;
+  line-height: 1.5;
+}
+.project-card {
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--vscode-editor-inactiveSelectionBackground);
+}
+.project-card--active {
+  border-color: var(--vscode-focusBorder);
+  background: var(--vscode-list-activeSelectionBackground);
+}
+.project-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.project-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+.project-card--active .project-card-name {
+  color: var(--vscode-list-activeSelectionForeground);
+}
+.project-card-active-pill {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--vscode-focusBorder);
+  color: var(--vscode-button-foreground);
+  padding: 1px 7px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.project-card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.project-type-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.project-type-pill--cli    { background: rgba(100, 160, 100, 0.2); color: #7ec87e; }
+.project-type-pill--web    { background: rgba(86, 156, 214, 0.2);  color: #569cd6; }
+.project-type-pill--mobile { background: rgba(197, 134, 192, 0.2); color: #c586c0; }
+.project-card-stack {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+.project-card-date {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  margin-left: auto;
+}
+.project-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.project-progress-bar {
+  height: 3px;
+  background: var(--vscode-progressBar-background);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.project-progress-label {
+  font-size: 10px;
+  color: var(--vscode-descriptionForeground);
+}
+.project-switch-btn {
+  margin-top: 2px;
+  background: none;
+  border: 1px solid var(--vscode-button-secondaryBackground);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--vscode-font-family);
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  text-align: left;
+}
+.project-switch-btn:hover {
+  background: var(--vscode-button-secondaryBackground);
 }
 
 /* ── Streak ── */

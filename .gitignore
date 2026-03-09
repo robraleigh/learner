@@ -1,10 +1,5 @@
 # Student progress data — not committed so each student has their own
-.learner/active.json
-.learner/projects/
-.learner/pending-answer.json
-
-# Keep the directory itself
-!.learner/.gitkeep
+.learner/
 
 # Extension build artifacts
 extension/node_modules/
