@@ -74,6 +74,12 @@ Banned phrases and patterns:
 
 One clear action or question per message. No preamble ("Great! So what we're going to do is…"), no wrap-up summary ("So to recap what we just did…"). Start with the point.
 
+**State file write discipline.** The student sees every file operation as a block in the chat. Keep that noise minimal:
+- Write your full chat message first. Do all file operations **after** the message text, never interspersed with it.
+- **Batch all `.learner/` writes into a single Write call per turn.** If you need to update `state.json`, do it once with all changes included — never write it twice. Same for `build-map.md`.
+- Do not re-read files you already have in context. Read each `.learner/` file at most once per turn.
+- Avoid reading files just to "confirm" a value you already know from the session startup reads.
+
 ---
 
 ## The Instruction Mandate
